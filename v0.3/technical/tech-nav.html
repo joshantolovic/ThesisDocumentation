@@ -30,6 +30,11 @@
             padding: 20px;
             overflow-y: auto;
             flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar.hidden {
+            transform: translateX(-100%);
         }
         
         .back-button {
@@ -180,6 +185,32 @@
             background: #3498db;
             border-radius: 4px;
         }
+        
+        /* Keyboard hint */
+        .keyboard-hint {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(52, 73, 94, 0.9);
+            color: #ecf0f1;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            z-index: 1000;
+            transition: opacity 0.3s ease;
+        }
+        
+        .keyboard-hint kbd {
+            background: #3498db;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+            margin: 0 2px;
+        }
+        
+        .sidebar.hidden ~ .main-content .keyboard-hint {
+            left: 20px;
+        }
     </style>
 </head>
 <body>
@@ -238,6 +269,8 @@
         
         <!-- Main Content Area -->
         <div class="main-content">
+            <div class="keyboard-hint">Press <kbd>H</kbd> to hide/show sidebar</div>
+            
             <div class="welcome-screen" id="welcomeScreen">
                 <h1>Technical Documentation</h1>
                 <p>Comprehensive programmer reference for the Unity plant ecosystem simulation. Eight detailed diagrams covering architecture, timing, formulas, and state machines.</p>
@@ -256,6 +289,17 @@
         const welcomeScreen = document.getElementById('welcomeScreen');
         const iframeContainer = document.getElementById('iframeContainer');
         const diagramFrame = document.getElementById('diagramFrame');
+        const sidebar = document.querySelector('.sidebar');
+        
+        // Keyboard shortcut (H key)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'h' || e.key === 'H') {
+                // Don't trigger if user is typing in an input field
+                if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                    sidebar.classList.toggle('hidden');
+                }
+            }
+        });
         
         navItems.forEach(item => {
             item.addEventListener('click', function() {
