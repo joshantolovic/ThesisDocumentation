@@ -122,6 +122,11 @@
             background: #fff;
             overflow: hidden;
             position: relative;
+            transition: margin-left 0.3s ease;
+        }
+        
+        .sidebar.hidden ~ .main-content {
+            margin-left: -320px;
         }
         
         .iframe-container {
@@ -185,32 +190,6 @@
             background: #e74c3c;
             border-radius: 4px;
         }
-        
-        /* Keyboard hint */
-        .keyboard-hint {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(52, 73, 94, 0.9);
-            color: #ecf0f1;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 11px;
-            z-index: 1000;
-            transition: opacity 0.3s ease;
-        }
-        
-        .keyboard-hint kbd {
-            background: #e74c3c;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-weight: bold;
-            margin: 0 2px;
-        }
-        
-        .sidebar.hidden ~ .main-content .keyboard-hint {
-            left: 20px;
-        }
     </style>
 </head>
 <body>
@@ -266,8 +245,6 @@
         
         <!-- Main Content Area -->
         <div class="main-content">
-            <div class="keyboard-hint">Press <kbd>H</kbd> to hide/show sidebar</div>
-            
             <div class="welcome-screen" id="welcomeScreen">
                 <h1>Designer Documentation</h1>
                 <p>Visual guides and parameter references for game designers, balancers, and content creators. Focus on behavior tuning and ecosystem configuration.</p>
