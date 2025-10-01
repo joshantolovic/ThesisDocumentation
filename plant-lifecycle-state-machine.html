@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Lifecycle State Machine</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            background: #ffffff;
+            color: #000000;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            border-bottom: 3px solid #000;
+            padding-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .state-diagram {
+            background: #fff;
+            border: 3px solid #000;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .state-node {
+            background: #f5f5f5;
+            border: 3px solid #000;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 400px;
+            position: relative;
+        }
+        
+        .state-node.healthy {
+            background: #dcfce7;
+            border-color: #16a34a;
+        }
+        
+        .state-node.wilting {
+            background: #fef3c7;
+            border-color: #f59e0b;
+        }
+        
+        .state-node.decaying {
+            background: #fed7aa;
+            border-color: #ea580c;
+        }
+        
+        .state-node.dead {
+            background: #e5e5e5;
+            border-color: #666;
+        }
+        
+        .state-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .state-name.healthy { color: #16a34a; }
+        .state-name.wilting { color: #f59e0b; }
+        .state-name.decaying { color: #ea580c; }
+        .state-name.dead { color: #666; }
+        
+        .state-desc {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .state-behavior {
+            margin-top: 10px;
+            padding: 10px;
+            background: #fff;
+            border-left: 3px solid #666;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        
+        .transition-arrow {
+            width: 3px;
+            height: 40px;
+            background: #000;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .transition-arrow::after {
+            content: '▼';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+            color: #000;
+        }
+        
+        .transition-label {
+            text-align: center;
+            font-size: 13px;
+            color: #dc2626;
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 8px;
+            background: #fee2e2;
+            border: 2px solid #dc2626;
+        }
+        
+        .timing-note {
+            text-align: center;
+            font-size: 11px;
+            color: #666;
+            font-style: italic;
+            margin-top: 5px;
+        }
+        
+        .behavior-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .behavior-box {
+            border: 3px solid #000;
+            padding: 18px;
+            background: #f9f9f9;
+        }
+        
+        .behavior-header {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #666;
+        }
+        
+        .behavior-item {
+            margin: 10px 0;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        .behavior-label {
+            font-weight: bold;
+            color: #2563eb;
+        }
+        
+        .timeline {
+            background: #E5F0FF;
+            border: 3px solid #2563eb;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .timeline-header {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2563eb;
+            text-align: center;
+        }
+        
+        .timeline-bar {
+            display: flex;
+            height: 60px;
+            margin: 20px 0;
+            border: 2px solid #000;
+        }
+        
+        .timeline-segment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 2px solid #000;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            padding: 5px;
+        }
+        
+        .timeline-segment:last-child {
+            border-right: none;
+        }
+        
+        .timeline-segment.healthy {
+            background: #dcfce7;
+            flex: 0 0 60%;
+        }
+        
+        .timeline-segment.wilting {
+            background: #fef3c7;
+            flex: 0 0 15%;
+        }
+        
+        .timeline-segment.decaying {
+            background: #fed7aa;
+            flex: 0 0 15%;
+        }
+        
+        .timeline-segment.dead {
+            background: #e5e5e5;
+            flex: 0 0 10%;
+        }
+        
+        .timeline-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #666;
+        }
+        
+        .note {
+            margin-top: 30px;
+            padding: 14px;
+            background: #f9f9f9;
+            border-left: 4px solid #666;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+        
+        .note strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        @media print {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PLANT LIFECYCLE STATE MACHINE</h1>
+        <div class="subtitle">State transitions from birth to permanent death</div>
+        
+        <div class="state-diagram">
+            <!-- HEALTHY STATE -->
+            <div class="state-node healthy">
+                <div class="state-name healthy">STATE: HEALTHY</div>
+                <div class="state-desc">
+                    Plant is actively growing and competing for resources. This is the only state where growth occurs.
+                </div>
+                <div class="state-behavior">
+                    <strong>Behavior Each Cycle:</strong><br>
+                    • Check CanGrow() for moisture availability<br>
+                    • If YES: Apply growth, reset drought timer, consume moisture<br>
+                    • If NO: Increment drought timer (timeInDrought += checkInterval)
+                </div>
+            </div>
+            
+            <div class="transition-arrow"></div>
+            <div class="transition-label">
+                TRIGGER: timeInDrought ≥ timeToDie
+            </div>
+            <div class="timing-note">
+                Default: 10 seconds of no growth
+            </div>
+            
+            <!-- WILTING STATE -->
+            <div class="state-node wilting">
+                <div class="state-name wilting">STATE: WILTING</div>
+                <div class="state-desc">
+                    Plant has exceeded drought threshold and begins death sequence. No longer grows or consumes moisture.
+                </div>
+                <div class="state-behavior">
+                    <strong>Behavior:</strong><br>
+                    • Skipped in GrowthLoop (no growth checks)<br>
+                    • Color: Still green (same as Healthy)<br>
+                    • Waiting for DeathCycleCoroutine timer
+                </div>
+            </div>
+            
+            <div class="transition-arrow"></div>
+            <div class="transition-label">
+                TRIGGER: Random delay (1-5 seconds / timeScale)
+            </div>
+            <div class="timing-note">
+                Staggered death for visual variety
+            </div>
+            
+            <!-- DECAYING STATE -->
+            <div class="state-node decaying">
+                <div class="state-name decaying">STATE: DECAYING</div>
+                <div class="state-desc">
+                    Plant visually turns brown, representing decomposition. Still exists in the world as dead vegetation.
+                </div>
+                <div class="state-behavior">
+                    <strong>Behavior:</strong><br>
+                    • Skipped in GrowthLoop<br>
+                    • Color: Brown (0.5, 0.4, 0.2) top, (0.4, 0.3, 0.1) bottom<br>
+                    • Can still be picked up by player<br>
+                    • Waiting for final timer
+                </div>
+            </div>
+            
+            <div class="transition-arrow"></div>
+            <div class="transition-label">
+                TRIGGER: Random delay (1-5 seconds / timeScale)
+            </div>
+            <div class="timing-note">
+                Second staggered delay
+            </div>
+            
+            <!-- DEAD STATE -->
+            <div class="state-node dead">
+                <div class="state-name dead">STATE: DEAD</div>
+                <div class="state-desc">
+                    Plant is permanently dead. Remains in world indefinitely as ecosystem history.
+                </div>
+                <div class="state-behavior">
+                    <strong>Behavior:</strong><br>
+                    • Skipped in GrowthLoop<br>
+                    • Color: Brown (same as Decaying)<br>
+                    • Can still be picked up by player<br>
+                    • Never removed from plantSeeds list<br>
+                    • <strong>This is the final state</strong>
+                </div>
+            </div>
+        </div>
+        
+        <!-- BEHAVIOR COMPARISON -->
+        <div class="behavior-grid">
+            <div class="behavior-box">
+                <div class="behavior-header">GROWTH LOOP BEHAVIOR</div>
+                
+                <div class="behavior-item">
+                    <span class="behavior-label">Healthy:</span><br>
+                    Fully processed every cycle. Growth checks, moisture consumption, competition.
+                </div>
+                
+                <div class="behavior-item">
+                    <span class="behavior-label">Wilting:</span><br>
+                    Skipped entirely. No processing.
+                </div>
+                
+                <div class="behavior-item">
+                    <span class="behavior-label">Decaying:</span><br>
+                    Skipped entirely. No processing.
+                </div>
+                
+                <div class="behavior-item">
+                    <span class="behavior-label">Dead:</span><br>
+                    Skipped entirely. No processing.
+                </div>
+            </div>
+            
+            <div class="behavior-box">
+                <div class="behavior-header">RENDERING BEHAVIOR</div>
+                
+                <div class="behavior-item">
+                    <span class="behavior-label">Healthy:</span><br>
+                    Green color (colorTop, colorBottom). Line from bottom to current height.
+                </div>
+                
+                <div class="behavior-item">
+                    <span class="behavior-label">Wilting:</span><br>
+                    Green color (same as Healthy). Visually indistinguishable.
+                </div>
+                
+                <div class="behavior-item">
+                    <span class="behavior-label">Decaying:</span><br>
+                    Brown color. Plant "corpse" remains visible.
+                </div>
+                
+                <div class="behavior-item">
+                    <span class="behavior-label">Dead:</span><br>
+                    Brown color (same as Decaying). Permanent visual presence.
+                </div>
+            </div>
+        </div>
+        
+        <!-- TIMELINE VISUALIZATION -->
+        <div class="timeline">
+            <div class="timeline-header">EXAMPLE TIMELINE: Plant Life to Death</div>
+            
+            <div class="timeline-bar">
+                <div class="timeline-segment healthy">HEALTHY<br>(60s growing)</div>
+                <div class="timeline-segment wilting">WILT<br>(~3s)</div>
+                <div class="timeline-segment decaying">DECAY<br>(~3s)</div>
+                <div class="timeline-segment dead">DEAD<br>(forever)</div>
+            </div>
+            
+            <div class="timeline-labels">
+                <span>Birth</span>
+                <span>10s drought</span>
+                <span>Random delay</span>
+                <span>Random delay</span>
+                <span>Permanent</span>
+            </div>
+            
+            <div style="margin-top: 20px; font-size: 12px; line-height: 1.6; color: #333;">
+                <strong>Notes:</strong><br>
+                • Healthy duration varies (depends on moisture availability)<br>
+                • Both transition delays are random (1-5 seconds)<br>
+                • All timings affected by ManagerTime.timeScale<br>
+                • Dead state has no time limit - plants remain forever
+            </div>
+        </div>
+        
+        <div class="note">
+            <strong>KEY INSIGHTS:</strong>
+            • <strong>One-Way Progression:</strong> Plants never return to Healthy once they start dying. No recovery mechanic.<br><br>
+            • <strong>Drought Threshold:</strong> Only trigger is timeInDrought ≥ timeToDie. Even one growth cycle resets the timer to 0.<br><br>
+            • <strong>Staggered Death:</strong> Random delays prevent all plants from turning brown simultaneously (more natural).<br><br>
+            • <strong>Performance Optimization:</strong> Non-Healthy plants are skipped in GrowthLoop (state check happens first).<br><br>
+            • <strong>Permanent Presence:</strong> Dead plants never despawn. They create visual history of the ecosystem's struggles.<br><br>
+            • <strong>Player Interaction:</strong> All states can be picked up and moved, even Dead plants (no state restrictions).
+        </div>
+    </div>
+</body>
+</html>

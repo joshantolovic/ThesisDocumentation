@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Ecosystem - Technical Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: #f5f5f5;
+            overflow: hidden;
+        }
+        
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 320px;
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        
+        .sidebar-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+        
+        .sidebar-subtitle {
+            font-size: 12px;
+            color: #bdc3c7;
+            margin-bottom: 20px;
+        }
+        
+        .backup-section {
+            background: #34495e;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+        }
+        
+        .backup-title {
+            font-size: 11px;
+            color: #bdc3c7;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .backup-btn {
+            width: 100%;
+            padding: 8px 12px;
+            margin: 4px 0;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            transition: background 0.2s;
+        }
+        
+        .backup-btn:hover {
+            background: #2980b9;
+        }
+        
+        .backup-btn.import {
+            background: #16a34a;
+        }
+        
+        .backup-btn.import:hover {
+            background: #15803d;
+        }
+        
+        .backup-info {
+            font-size: 10px;
+            color: #95a5a6;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+        
+        .hidden-input {
+            display: none;
+        }
+        
+        .nav-section {
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .nav-item {
+            padding: 12px 15px;
+            margin: 5px 0;
+            background: #34495e;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+        }
+        
+        .nav-item:hover {
+            background: #415a77;
+            border-left-color: #3498db;
+        }
+        
+        .nav-item.active {
+            background: #3498db;
+            border-left-color: #ecf0f1;
+            font-weight: bold;
+        }
+        
+        .nav-number {
+            display: inline-block;
+            width: 25px;
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        .nav-item.active .nav-number {
+            color: #ecf0f1;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            background: #fff;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .iframe-container {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .welcome-screen h1 {
+            font-size: 32px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .welcome-screen p {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        
+        .diagram-count {
+            font-size: 48px;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+        
+        .instruction {
+            font-size: 14px;
+            color: #95a5a6;
+            font-style: italic;
+        }
+        
+        /* Scrollbar styling */
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .sidebar::-webkit-scrollbar-track {
+            background: #34495e;
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #3498db;
+            border-radius: 4px;
+        }
+        
+        @media print {
+            .sidebar {
+                display: none;
+            }
+            
+            .main-content {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="sidebar-header">Plant Ecosystem</div>
+            <div class="sidebar-subtitle">Technical Documentation</div>
+            
+            <!-- Backup Section -->
+            <div class="backup-section">
+                <div class="backup-title">Comment Backup</div>
+                <button class="backup-btn" id="exportBtn">Export Comments</button>
+                <button class="backup-btn import" id="importBtn">Import Comments</button>
+                <input type="file" id="fileInput" class="hidden-input" accept=".json">
+                <div class="backup-info" id="commentCount">No comments saved</div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="section-title">System Overview</div>
+                
+                <div class="nav-item" data-diagram="frame-execution-timeline">
+                    <span class="nav-number">01</span> Frame Execution Timeline
+                </div>
+                
+                <div class="nav-item" data-diagram="manager-interaction-map">
+                    <span class="nav-number">02</span> Manager Interaction Map
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="section-title">Growth & Competition</div>
+                
+                <div class="nav-item" data-diagram="growth-loop-flowchart">
+                    <span class="nav-number">03</span> Growth Loop Flowchart
+                </div>
+                
+                <div class="nav-item" data-diagram="growth-formula-breakdown">
+                    <span class="nav-number">04</span> Growth Formula Breakdown
+                </div>
+                
+                <div class="nav-item" data-diagram="moisture-competition-steps">
+                    <span class="nav-number">05</span> Moisture Competition Steps
+                </div>
+                
+                <div class="nav-item" data-diagram="etiolation-calculation">
+                    <span class="nav-number">06</span> Etiolation Calculation
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="section-title">Configuration & States</div>
+                
+                <div class="nav-item" data-diagram="parameter-influence-map">
+                    <span class="nav-number">07</span> Parameter Influence Map
+                </div>
+                
+                <div class="nav-item" data-diagram="plant-lifecycle-state-machine">
+                    <span class="nav-number">08</span> Plant Lifecycle States
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <div class="welcome-screen" id="welcomeScreen">
+                <h1>Technical Documentation</h1>
+                <p>Comprehensive programmer reference for the Unity plant ecosystem simulation. Eight detailed diagrams covering architecture, timing, formulas, and state machines.</p>
+                <div class="diagram-count">8 Diagrams</div>
+                <div class="instruction">← Select a diagram from the left sidebar to begin</div>
+            </div>
+            
+            <div class="iframe-container" id="iframeContainer" style="display: none;">
+                <iframe id="diagramFrame"></iframe>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const navItems = document.querySelectorAll('.nav-item');
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        const iframeContainer = document.getElementById('iframeContainer');
+        const diagramFrame = document.getElementById('diagramFrame');
+        
+        let currentDiagram = null;
+        let comments = JSON.parse(localStorage.getItem('diagramComments') || '{}');
+        
+        // Update comment count display
+        function updateCommentCount() {
+            const totalComments = Object.values(comments).reduce((sum, diagramComments) => {
+                return sum + Object.keys(diagramComments).length;
+            }, 0);
+            
+            const countEl = document.getElementById('commentCount');
+            if (totalComments === 0) {
+                countEl.textContent = 'No comments saved';
+            } else {
+                const diagrams = Object.keys(comments).filter(k => Object.keys(comments[k]).length > 0).length;
+                countEl.textContent = `${totalComments} comment${totalComments !== 1 ? 's' : ''} across ${diagrams} diagram${diagrams !== 1 ? 's' : ''}`;
+            }
+        }
+        
+        updateCommentCount();
+        
+        // Export comments
+        document.getElementById('exportBtn').addEventListener('click', function() {
+            const dataStr = JSON.stringify(comments, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            
+            const date = new Date().toISOString().split('T')[0];
+            link.download = `plant-ecosystem-comments-${date}.json`;
+            
+            link.click();
+            
+            alert('Comments exported! Save this file with your HTML files as a backup.');
+        });
+        
+        // Import comments
+        document.getElementById('importBtn').addEventListener('click', function() {
+            document.getElementById('fileInput').click();
+        });
+        
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const importedComments = JSON.parse(event.target.result);
+                    
+                    // Ask if they want to merge or replace
+                    const hasExisting = Object.keys(comments).some(k => Object.keys(comments[k] || {}).length > 0);
+                    
+                    if (hasExisting) {
+                        const merge = confirm('You have existing comments.\n\nOK = Merge with imported comments\nCancel = Replace all with imported comments');
+                        
+                        if (merge) {
+                            // Merge comments
+                            Object.keys(importedComments).forEach(diagram => {
+                                if (!comments[diagram]) comments[diagram] = {};
+                                Object.assign(comments[diagram], importedComments[diagram]);
+                            });
+                        } else {
+                            // Replace all
+                            comments = importedComments;
+                        }
+                    } else {
+                        comments = importedComments;
+                    }
+                    
+                    localStorage.setItem('diagramComments', JSON.stringify(comments));
+                    updateCommentCount();
+                    
+                    alert('Comments imported successfully!\n\nReload the current diagram to see imported comments.');
+                    
+                } catch (err) {
+                    alert('Error importing comments: Invalid file format');
+                    console.error(err);
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset input
+            e.target.value = '';
+        });
+        
+        navItems.forEach(item => {
+            item.addEventListener('click', function() {
+                // Remove active class from all items
+                navItems.forEach(nav => nav.classList.remove('active'));
+                
+                // Add active class to clicked item
+                this.classList.add('active');
+                
+                // Get diagram filename
+                const diagramId = this.getAttribute('data-diagram');
+                currentDiagram = diagramId;
+                
+                // Hide welcome screen, show iframe
+                welcomeScreen.style.display = 'none';
+                iframeContainer.style.display = 'block';
+                
+                // Load diagram
+                diagramFrame.src = diagramId + '.html';
+                
+                // Wait for iframe to load, then inject comment system
+                diagramFrame.onload = function() {
+                    injectCommentSystem();
+                };
+            });
+        });
+        
+        function injectCommentSystem() {
+            const iframeDoc = diagramFrame.contentDocument || diagramFrame.contentWindow.document;
+            
+            // Inject CSS for comments
+            const style = iframeDoc.createElement('style');
+            style.textContent = `
+                .comment-highlight {
+                    background-color: #fef3c7 !important;
+                    cursor: pointer;
+                    position: relative;
+                }
+                
+                .comment-indicator {
+                    display: inline-block;
+                    background: #f59e0b;
+                    color: white;
+                    border-radius: 50%;
+                    width: 18px;
+                    height: 18px;
+                    text-align: center;
+                    line-height: 18px;
+                    font-size: 11px;
+                    font-weight: bold;
+                    margin-left: 3px;
+                    cursor: pointer;
+                    vertical-align: super;
+                }
+                
+                .comment-box {
+                    position: fixed;
+                    right: 20px;
+                    background: white;
+                    border: 2px solid #f59e0b;
+                    border-radius: 8px;
+                    padding: 15px;
+                    width: 280px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                    z-index: 10000;
+                    font-family: 'Courier New', monospace;
+                }
+                
+                .comment-header {
+                    font-size: 12px;
+                    font-weight: bold;
+                    margin-bottom: 8px;
+                    color: #f59e0b;
+                }
+                
+                .comment-textarea {
+                    width: 100%;
+                    min-height: 80px;
+                    padding: 8px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    font-family: 'Courier New', monospace;
+                    font-size: 12px;
+                    resize: vertical;
+                }
+                
+                .comment-buttons {
+                    display: flex;
+                    gap: 8px;
+                    margin-top: 10px;
+                }
+                
+                .comment-btn {
+                    flex: 1;
+                    padding: 6px 12px;
+                    border: none;
+                    border-radius: 4px;
+                    font-size: 11px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    font-family: 'Courier New', monospace;
+                }
+                
+                .comment-btn-save {
+                    background: #16a34a;
+                    color: white;
+                }
+                
+                .comment-btn-delete {
+                    background: #dc2626;
+                    color: white;
+                }
+                
+                .comment-btn-cancel {
+                    background: #e5e5e5;
+                    color: #333;
+                }
+                
+                .comment-display {
+                    position: fixed;
+                    right: 20px;
+                    background: white;
+                    border: 2px solid #f59e0b;
+                    border-radius: 8px;
+                    padding: 12px;
+                    width: 280px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                    z-index: 10000;
+                    font-family: 'Courier New', monospace;
+                }
+                
+                .comment-display-header {
+                    font-size: 11px;
+                    font-weight: bold;
+                    color: #999;
+                    margin-bottom: 8px;
+                }
+                
+                .comment-display-text {
+                    font-size: 12px;
+                    line-height: 1.5;
+                    color: #333;
+                    white-space: pre-wrap;
+                    margin-bottom: 10px;
+                }
+                
+                .comment-display-buttons {
+                    display: flex;
+                    gap: 8px;
+                }
+                
+                .toolbar {
+                    position: fixed;
+                    top: 10px;
+                    right: 10px;
+                    background: #2c3e50;
+                    padding: 8px 12px;
+                    border-radius: 6px;
+                    z-index: 9999;
+                    font-size: 12px;
+                    color: white;
+                    font-family: 'Courier New', monospace;
+                }
+                
+                .toolbar-btn {
+                    background: #3498db;
+                    color: white;
+                    border: none;
+                    padding: 6px 12px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 11px;
+                    font-weight: bold;
+                    margin-left: 8px;
+                    font-family: 'Courier New', monospace;
+                }
+                
+                .toolbar-btn:hover {
+                    background: #2980b9;
+                }
+            `;
+            iframeDoc.head.appendChild(style);
+            
+            // Add toolbar
+            const toolbar = iframeDoc.createElement('div');
+            toolbar.className = 'toolbar';
+            toolbar.innerHTML = `
+                Comments: <button class="toolbar-btn" id="toggleComments">Show All</button>
+                <button class="toolbar-btn" id="addComment">Add Comment</button>
+            `;
+            iframeDoc.body.appendChild(toolbar);
+            
+            let commentsVisible = false;
+            let commentCounter = 0;
+            
+            // Load existing comments for this diagram
+            if (comments[currentDiagram]) {
+                commentCounter = Object.keys(comments[currentDiagram]).length;
+            }
+            
+            // Toggle comments visibility
+            iframeDoc.getElementById('toggleComments').addEventListener('click', function() {
+                commentsVisible = !commentsVisible;
+                this.textContent = commentsVisible ? 'Hide All' : 'Show All';
+                
+                const highlights = iframeDoc.querySelectorAll('.comment-highlight');
+                highlights.forEach(h => {
+                    h.style.backgroundColor = commentsVisible ? '#fef3c7' : 'transparent';
+                });
+            });
+            
+            // Add comment on selection
+            iframeDoc.getElementById('addComment').addEventListener('click', function() {
+                const selection = iframeDoc.getSelection();
+                if (!selection.rangeCount || selection.isCollapsed) {
+                    alert('Please select some text first');
+                    return;
+                }
+                
+                const range = selection.getRangeAt(0);
+                const selectedText = selection.toString();
+                
+                // Create highlight span
+                const highlight = iframeDoc.createElement('span');
+                highlight.className = 'comment-highlight';
+                
+                try {
+                    range.surroundContents(highlight);
+                } catch(e) {
+                    alert('Cannot add comment to this selection. Try selecting plain text.');
+                    return;
+                }
+                
+                const commentId = ++commentCounter;
+                highlight.dataset.commentId = commentId;
+                
+                // Add indicator
+                const indicator = iframeDoc.createElement('span');
+                indicator.className = 'comment-indicator';
+                indicator.textContent = commentId;
+                indicator.dataset.commentId = commentId;
+                highlight.appendChild(indicator);
+                
+                // Show comment box
+                showCommentBox(iframeDoc, commentId, selectedText, null);
+                
+                selection.removeAllRanges();
+            });
+            
+            // Restore saved comments
+            if (comments[currentDiagram]) {
+                // We can't perfectly restore highlights, but we can show a note
+                console.log('Saved comments exist for this diagram:', comments[currentDiagram]);
+            }
+        }
+        
+        function showCommentBox(doc, commentId, selectedText, existingComment) {
+            // Remove any existing comment boxes
+            const existing = doc.querySelectorAll('.comment-box, .comment-display');
+            existing.forEach(e => e.remove());
+            
+            const box = doc.createElement('div');
+            box.className = 'comment-box';
+            box.style.top = '60px';
+            
+            box.innerHTML = `
+                <div class="comment-header">Comment on: "${selectedText.substring(0, 30)}..."</div>
+                <textarea class="comment-textarea" placeholder="Add your comment...">${existingComment || ''}</textarea>
+                <div class="comment-buttons">
+                    <button class="comment-btn comment-btn-save">Save</button>
+                    ${existingComment ? '<button class="comment-btn comment-btn-delete">Delete</button>' : ''}
+                    <button class="comment-btn comment-btn-cancel">Cancel</button>
+                </div>
+            `;
+            
+            doc.body.appendChild(box);
+            
+            const textarea = box.querySelector('.comment-textarea');
+            textarea.focus();
+            
+            // Save button
+            box.querySelector('.comment-btn-save').addEventListener('click', () => {
+                const commentText = textarea.value.trim();
+                if (!commentText) {
+                    alert('Comment cannot be empty');
+                    return;
+                }
+                
+                // Save to localStorage
+                if (!comments[currentDiagram]) comments[currentDiagram] = {};
+                comments[currentDiagram][commentId] = {
+                    text: commentText,
+                    selectedText: selectedText
+                };
+                localStorage.setItem('diagramComments', JSON.stringify(comments));
+                updateCommentCount();
+                
+                box.remove();
+                
+                // Show saved comment on click
+                const highlight = doc.querySelector(`[data-comment-id="${commentId}"]`);
+                if (highlight) {
+                    highlight.addEventListener('click', () => {
+                        showCommentDisplay(doc, commentId, selectedText, commentText);
+                    });
+                }
+            });
+            
+            // Delete button
+            const deleteBtn = box.querySelector('.comment-btn-delete');
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', () => {
+                    if (confirm('Delete this comment?')) {
+                        delete comments[currentDiagram][commentId];
+                        localStorage.setItem('diagramComments', JSON.stringify(comments));
+                        updateCommentCount();
+                        
+                        const highlight = doc.querySelector(`[data-comment-id="${commentId}"]`);
+                        if (highlight) {
+                            const parent = highlight.parentNode;
+                            while (highlight.firstChild) {
+                                parent.insertBefore(highlight.firstChild, highlight);
+                            }
+                            parent.removeChild(highlight);
+                        }
+                        
+                        box.remove();
+                    }
+                });
+            }
+            
+            // Cancel button
+            box.querySelector('.comment-btn-cancel').addEventListener('click', () => {
+                if (!existingComment) {
+                    // Remove highlight if canceling new comment
+                    const highlight = doc.querySelector(`[data-comment-id="${commentId}"]`);
+                    if (highlight) {
+                        const parent = highlight.parentNode;
+                        while (highlight.firstChild) {
+                            parent.insertBefore(highlight.firstChild, highlight);
+                        }
+                        parent.removeChild(highlight);
+                    }
+                }
+                box.remove();
+            });
+        }
+        
+        function showCommentDisplay(doc, commentId, selectedText, commentText) {
+            // Remove any existing comment boxes
+            const existing = doc.querySelectorAll('.comment-box, .comment-display');
+            existing.forEach(e => e.remove());
+            
+            const display = doc.createElement('div');
+            display.className = 'comment-display';
+            display.style.top = '60px';
+            
+            display.innerHTML = `
+                <div class="comment-display-header">Comment #${commentId}</div>
+                <div class="comment-display-text">${commentText}</div>
+                <div class="comment-display-buttons">
+                    <button class="comment-btn comment-btn-save">Edit</button>
+                    <button class="comment-btn comment-btn-delete">Delete</button>
+                    <button class="comment-btn comment-btn-cancel">Close</button>
+                </div>
+            `;
+            
+            doc.body.appendChild(display);
+            
+            // Edit button
+            display.querySelector('.comment-btn-save').addEventListener('click', () => {
+                display.remove();
+                showCommentBox(doc, commentId, selectedText, commentText);
+            });
+            
+            // Delete button
+            display.querySelector('.comment-btn-delete').addEventListener('click', () => {
+                if (confirm('Delete this comment?')) {
+                    delete comments[currentDiagram][commentId];
+                    localStorage.setItem('diagramComments', JSON.stringify(comments));
+                    updateCommentCount();
+                    
+                    const highlight = doc.querySelector(`[data-comment-id="${commentId}"]`);
+                    if (highlight) {
+                        const parent = highlight.parentNode;
+                        while (highlight.firstChild) {
+                            parent.insertBefore(highlight.firstChild, highlight);
+                        }
+                        parent.removeChild(highlight);
+                    }
+                    
+                    display.remove();
+                }
+            });
+            
+            // Close button
+            display.querySelector('.comment-btn-cancel').addEventListener('click', () => {
+                display.remove();
+            });
+        }
+    </script>
+</body>
+</html>

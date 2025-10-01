@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parameter Influence Map</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            background: #ffffff;
+            color: #000000;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            border-bottom: 3px solid #000;
+            padding-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .category {
+            background: #fff;
+            border: 3px solid #000;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .category-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #666;
+        }
+        
+        .param-block {
+            background: #f9f9f9;
+            border-left: 4px solid #2563eb;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .param-name {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2563eb;
+        }
+        
+        .param-default {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+        
+        .affects-list {
+            margin-top: 10px;
+        }
+        
+        .affect-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin: 6px 0;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        .arrow {
+            color: #dc2626;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .affect-desc {
+            color: #333;
+        }
+        
+        .impact-level {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+        
+        .critical { background: #fee2e2; color: #dc2626; }
+        .high { background: #fed7aa; color: #ea580c; }
+        .medium { background: #fef3c7; color: #ca8a04; }
+        .low { background: #e0e7ff; color: #4f46e5; }
+        
+        .warning-box {
+            background: #FFF5E5;
+            border: 2px solid #f59e0b;
+            padding: 12px;
+            margin-top: 10px;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+        
+        .warning-icon {
+            font-weight: bold;
+            color: #f59e0b;
+            margin-right: 6px;
+        }
+        
+        .interaction-note {
+            background: #E5F0FF;
+            border: 2px solid #2563eb;
+            padding: 12px;
+            margin-top: 10px;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+        
+        .interaction-icon {
+            font-weight: bold;
+            color: #2563eb;
+            margin-right: 6px;
+        }
+        
+        .note {
+            margin-top: 30px;
+            padding: 14px;
+            background: #f9f9f9;
+            border-left: 4px solid #666;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+        
+        .note strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        @media print {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PARAMETER INFLUENCE MAP</h1>
+        <div class="subtitle">Inspector parameters and their system-wide effects</div>
+        
+        <!-- GROWTH PARAMETERS -->
+        <div class="category">
+            <div class="category-header">GROWTH RATE PARAMETERS (ManagerPlant1)</div>
+            
+            <div class="param-block">
+                <div class="param-name">checkInterval</div>
+                <div class="param-default">Default: 1.0 seconds</div>
+                <div class="affects-list">
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">How often GrowthLoop evaluates all plants <span class="impact-level critical">CRITICAL</span></span>
+                    </div>
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Drought accumulation rate (timeInDrought += checkInterval)</span>
+                    </div>
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Frequency of moisture removal from soil</span>
+                    </div>
+                </div>
+                <div class="warning-box">
+                    <span class="warning-icon">⚠</span>
+                    <strong>Performance Impact:</strong> Lower values = more frequent checks = higher CPU usage. Values below 0.5s may cause frame drops.
+                </div>
+            </div>
+            
+            <div class="param-block">
+                <div class="param-name">growthIncrementLength</div>
+                <div class="param-default">Default: 0.002 units</div>
+                <div class="affects-list">
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Base vertical growth speed <span class="impact-level high">HIGH</span></span>
+                    </div>
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">How tall plants can grow before death</span>
+                    </div>
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Visual appearance (tall forest vs short grass)</span>
+                    </div>
+                </div>
+                <div class="interaction-note">
+                    <span class="interaction-icon">↔</span>
+                    <strong>Interacts with:</strong> etiolationStrength (crowded plants grow 2x this value in height)
+                </div>
+            </div>
+            
+            <div class="param-block">
+                <div class="param-name">growthIncrementWidth</div>
+                <div class="param-default">Default: 0.0001 units</div>
+                <div class="affects-list">
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Base thickness growth speed <span class="impact-level high">HIGH</span></span>
+                    </div>
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Root radius expansion rate (wider plants = bigger root zones)</span>
+                    </div>
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Competition priority (width weighted 2x in priority formula)</span>
+                    </div>
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Number of neighbors detected (bigger roots = more neighbors)</span>
+                    </div>
+                </div>
+                <div class="warning-box">
+                    <span class="warning-icon">⚠</span>
+                    <strong>Cascading Effect:</strong> Increasing this creates dominant plants that outcompete others (rich get richer).
+                </div>
+            </div>
+            
+            <div class="param-block">
+                <div class="param-name">rootDistanceMultiplier</div>
+                <div class="param-default">Default: 1.0</div>
+                <div class="affects-list">
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">How much root radius increases per width growth <span class="impact-level medium">MEDIUM</span></span>
+                    </div>
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Moisture access range (higher = can reach more distant tiles)</span>
+                    </div>
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Neighbor detection range (higher = more crowding effects)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- MOISTURE PARAMETERS -->
+        <div class="category">
+            <div class="category-header">MOISTURE PARAMETERS (ManagerPlant1)</div>
+            
+            <div class="param-block">
+                <div class="param-name">minMoisture / maxMoisture</div>
+                <div class="param-default">Default: 0.3 / 0.7</div>
+                <div class="affects-list">
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Acceptable moisture range for plant growth <span class="impact-level critical">CRITICAL</span></span>
+                    </div>
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">How many tiles are "usable" at any given time</span>
+                    </div>
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Narrower range = more drought = more plant death</span>
+                    </div>
+                </div>
+                <div class="warning-box">
+                    <span class="warning-icon">⚠</span>
+                    <strong>Ecosystem Stability:</strong> Range smaller than 0.3 units may cause mass die-offs during rain cycles.
+                </div>
+            </div>
+            
+            <div class="param-block">
+                <div class="param-name">optimalMoisture</div>
+                <div class="param-default">Default: 0.5 (middle of range)</div>
+                <div class="affects-list">
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Target moisture for maximum growth rate <span class="impact-level high">HIGH</span></span>
+                    </div>
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Center point for moisture quality calculation</span>
+                    </div>
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Plants grow slower when moisture is far from this value</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="param-block">
+                <div class="param-name">marginalMoistureGrowthRate</div>
+                <div class="param-default">Default: 0.5 (half speed at edges)</div>
+                <div class="affects-list">
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Growth rate at edge of acceptable range <span class="impact-level medium">MEDIUM</span></span>
+                    </div>
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Penalty for non-optimal conditions</span>
+                    </div>
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Lower values = plants more sensitive to moisture quality</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="param-block">
+                <div class="param-name">moistureDecrement</div>
+                <div class="param-default">Default: 0.01 per growth cycle</div>
+                <div class="affects-list">
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">How much moisture each plant consumes <span class="impact-level high">HIGH</span></span>
+                    </div>
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Rate of soil depletion</span>
+                    </div>
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Balance with rain replenishment (must match rain rate)</span>
+                    </div>
+                </div>
+                <div class="interaction-note">
+                    <span class="interaction-icon">↔</span>
+                    <strong>Must Balance With:</strong> Rain moistureIncrement and raindropCount. Too high = ecosystem collapse.
+                </div>
+            </div>
+        </div>
+        
+        <!-- COMPETITION PARAMETERS -->
+        <div class="category">
+            <div class="category-header">COMPETITION PARAMETERS (ManagerPlant1)</div>
+            
+            <div class="param-block">
+                <div class="param-name">etiolationStrength</div>
+                <div class="param-default">Default: 2.0 (double height, half width)</div>
+                <div class="affects-list">
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">How extreme crowding effects are <span class="impact-level high">HIGH</span></span>
+                    </div>
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Maximum length modifier (crowded plants grow this × taller)</span>
+                    </div>
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Minimum width modifier (crowded plants grow 1/this × thinner)</span>
+                    </div>
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Visual diversity (higher = more dramatic tall/thin vs short/wide)</span>
+                    </div>
+                </div>
+                <div class="warning-box">
+                    <span class="warning-icon">⚠</span>
+                    <strong>Stability Risk:</strong> Values > 3.0 create extremely thin plants that may look unrealistic. Values < 1.5 reduce visual variety.
+                </div>
+            </div>
+        </div>
+        
+        <!-- DEATH PARAMETERS -->
+        <div class="category">
+            <div class="category-header">DEATH PARAMETERS (ManagerPlant1)</div>
+            
+            <div class="param-block">
+                <div class="param-name">timeToDie</div>
+                <div class="param-default">Default: 10 seconds</div>
+                <div class="affects-list">
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">How long plants survive without moisture <span class="impact-level critical">CRITICAL</span></span>
+                    </div>
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Ecosystem resilience during rain gaps</span>
+                    </div>
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Population stability (lower = more volatile)</span>
+                    </div>
+                </div>
+                <div class="interaction-note">
+                    <span class="interaction-icon">↔</span>
+                    <strong>Scales With:</strong> ManagerTime.timeScale (10 seconds at 5x speed = 2 real seconds)
+                </div>
+            </div>
+        </div>
+        
+        <!-- RAIN PARAMETERS -->
+        <div class="category">
+            <div class="category-header">RAIN PARAMETERS (ManagerRain & ManagerSoil)</div>
+            
+            <div class="param-block">
+                <div class="param-name">raindropCount (ManagerRain)</div>
+                <div class="param-default">Default: 200 drops</div>
+                <div class="affects-list">
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Moisture replenishment rate <span class="impact-level high">HIGH</span></span>
+                    </div>
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">How quickly dry soil becomes wet</span>
+                    </div>
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Must balance with plant moistureDecrement</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="param-block">
+                <div class="param-name">moistureIncrement (ManagerSoil)</div>
+                <div class="param-default">Default: 0.1 per drop impact</div>
+                <div class="affects-list">
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">How much each raindrop adds to soil <span class="impact-level high">HIGH</span></span>
+                    </div>
+                    <div class="affect-item">
+                        <span class="arrow">→</span>
+                        <span class="affect-desc">Speed of moisture recovery after depletion</span>
+                    </div>
+                </div>
+                <div class="warning-box">
+                    <span class="warning-icon">⚠</span>
+                    <strong>Balance Formula:</strong> (raindropCount × moistureIncrement) should roughly equal (plantCount × moistureDecrement × checkInterval)
+                </div>
+            </div>
+        </div>
+        
+        <div class="note">
+            <strong>PARAMETER TUNING PRINCIPLES:</strong>
+            • <strong>Start with Ratios:</strong> Growth rate, moisture consumption, and rain replenishment must balance or ecosystem collapses.<br><br>
+            • <strong>Test Extremes:</strong> Try 10x and 0.1x values to understand boundaries and failure modes.<br><br>
+            • <strong>Watch Cascades:</strong> Changing growthIncrementWidth affects root radius → neighbor detection → etiolation → visual appearance.<br><br>
+            • <strong>Time Scale Matters:</strong> Parameters with "time" units (checkInterval, timeToDie) are affected by ManagerTime.timeScale.<br><br>
+            • <strong>Critical Trio:</strong> minMoisture/maxMoisture, timeToDie, and rain rate form the survival foundation. Tune these first.
+        </div>
+    </div>
+</body>
+</html>

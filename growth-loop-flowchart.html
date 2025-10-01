@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Growth Loop Flowchart</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            background: #ffffff;
+            color: #000000;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            border-bottom: 3px solid #000;
+            padding-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .legend {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            font-size: 14px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-box {
+            width: 24px;
+            height: 16px;
+            border: 2px solid #000;
+        }
+        
+        .process-box { background: #E5F0FF; }
+        .decision-box { background: #FFF5E5; }
+        .action-box { background: #E5FFE5; }
+        .end-box { background: #FFE5E5; }
+        
+        .flowchart {
+            background: #fff;
+            border: 3px solid #000;
+            padding: 20px;
+        }
+        
+        .flow-node {
+            margin: 0 auto 15px auto;
+            max-width: 550px;
+            position: relative;
+        }
+        
+        .node-box {
+            border: 3px solid #000;
+            padding: 14px 16px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        .node-box.process {
+            background: #E5F0FF;
+        }
+        
+        .node-box.decision {
+            background: #FFF5E5;
+            clip-path: polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%);
+            padding: 14px 35px;
+        }
+        
+        .node-box.action {
+            background: #E5FFE5;
+        }
+        
+        .node-box.end {
+            background: #FFE5E5;
+            border-radius: 25px;
+        }
+        
+        .node-label {
+            font-weight: bold;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+        
+        .node-detail {
+            color: #555;
+            font-size: 12px;
+        }
+        
+        .method {
+            font-family: 'Courier New', monospace;
+            background: #e5e5e5;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 11px;
+        }
+        
+        .arrow {
+            width: 3px;
+            height: 25px;
+            background: #000;
+            margin: 0 auto;
+        }
+        
+        .arrow-label {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            margin: 6px 0;
+            font-style: italic;
+        }
+        
+        .split-container {
+            display: flex;
+            gap: 25px;
+            max-width: 700px;
+            margin: 0 auto 15px auto;
+        }
+        
+        .split-path {
+            flex: 1;
+        }
+        
+        .split-arrow {
+            display: flex;
+            justify-content: space-around;
+            margin: 12px 0;
+        }
+        
+        .split-arrow-branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 45%;
+        }
+        
+        .branch-line {
+            width: 3px;
+            height: 20px;
+            background: #000;
+        }
+        
+        .loop-arrow {
+            border-left: 3px solid #666;
+            border-bottom: 3px solid #666;
+            height: 50px;
+            width: 60%;
+            margin: 15px auto 15px 20%;
+            position: relative;
+        }
+        
+        .loop-arrow::after {
+            content: '↑';
+            position: absolute;
+            left: -10px;
+            top: -25px;
+            font-size: 20px;
+            color: #666;
+        }
+        
+        .loop-label {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            font-style: italic;
+            margin-top: -15px;
+        }
+        
+        .note {
+            margin-top: 30px;
+            padding: 14px;
+            background: #f9f9f9;
+            border-left: 4px solid #666;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+        
+        .note strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        @media print {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>GROWTH LOOP FLOWCHART</h1>
+        <div class="subtitle">Per-plant decision flow executed every checkInterval</div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-box process-box"></div>
+                <span>Process</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box decision-box"></div>
+                <span>Decision</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box action-box"></div>
+                <span>Action</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box end-box"></div>
+                <span>Terminal</span>
+            </div>
+        </div>
+        
+        <div class="flowchart">
+            <!-- START -->
+            <div class="flow-node">
+                <div class="node-box process">
+                    <div class="node-label">START: GrowthLoop() Coroutine</div>
+                    <div class="node-detail">Frequency: checkInterval / timeScale (default 1 sec)</div>
+                </div>
+            </div>
+            
+            <div class="arrow"></div>
+            
+            <!-- WAIT FOR UNPAUSE -->
+            <div class="flow-node">
+                <div class="node-box process">
+                    <div class="node-label">Wait Until Not Paused</div>
+                    <div class="node-detail">yield return WaitUntil(() => !ManagerUI.isPaused)</div>
+                </div>
+            </div>
+            
+            <div class="arrow"></div>
+            
+            <!-- WAIT FOR INTERVAL -->
+            <div class="flow-node">
+                <div class="node-box process">
+                    <div class="node-label">Wait for Time Interval</div>
+                    <div class="node-detail">yield return WaitForSeconds(checkInterval / timeScale)</div>
+                </div>
+            </div>
+            
+            <div class="arrow"></div>
+            
+            <!-- FOR EACH PLANT -->
+            <div class="flow-node">
+                <div class="node-box process">
+                    <div class="node-label">For Each Plant in plantSeeds</div>
+                    <div class="node-detail">Iterate through all plants, process each independently</div>
+                </div>
+            </div>
+            
+            <div class="arrow"></div>
+            
+            <!-- CHECK STATE -->
+            <div class="flow-node">
+                <div class="node-box decision">
+                    <div class="node-label">Is Plant Healthy?</div>
+                    <div class="node-detail">state == PlantState.Healthy</div>
+                </div>
+            </div>
+            
+            <div class="split-arrow">
+                <div class="split-arrow-branch">
+                    <div class="arrow-label">YES</div>
+                    <div class="branch-line"></div>
+                </div>
+                <div class="split-arrow-branch">
+                    <div class="arrow-label">NO</div>
+                    <div class="branch-line"></div>
+                </div>
+            </div>
+            
+            <!-- SPLIT PATHS -->
+            <div class="split-container">
+                <!-- HEALTHY PATH -->
+                <div class="split-path">
+                    <div class="flow-node">
+                        <div class="node-box decision">
+                            <div class="node-label">Can Grow?</div>
+                            <div class="node-detail"><span class="method">CanGrow()</span><br>Check moisture availability</div>
+                        </div>
+                    </div>
+                    
+                    <div class="split-arrow">
+                        <div class="split-arrow-branch">
+                            <div class="arrow-label">YES</div>
+                            <div class="branch-line"></div>
+                        </div>
+                        <div class="split-arrow-branch">
+                            <div class="arrow-label">NO</div>
+                            <div class="branch-line"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="split-container">
+                        <!-- GROWTH PATH -->
+                        <div class="split-path">
+                            <div class="flow-node">
+                                <div class="node-box process">
+                                    <div class="node-label">Calculate Modifiers</div>
+                                    <div class="node-detail">
+                                        • <span class="method">GetMoistureQualityModifier()</span><br>
+                                        • <span class="method">GetEtiolationModifier()</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="arrow"></div>
+                            
+                            <div class="flow-node">
+                                <div class="node-box action">
+                                    <div class="node-label">Apply Growth</div>
+                                    <div class="node-detail">
+                                        length += increment × vigor × moisture × etiolation.length<br>
+                                        width += increment × vigor × moisture × etiolation.width
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="arrow"></div>
+                            
+                            <div class="flow-node">
+                                <div class="node-box action">
+                                    <div class="node-label">Reset Drought Timer</div>
+                                    <div class="node-detail">timeInDrought = 0</div>
+                                </div>
+                            </div>
+                            
+                            <div class="arrow"></div>
+                            
+                            <div class="flow-node">
+                                <div class="node-box action">
+                                    <div class="node-label">Remove Moisture</div>
+                                    <div class="node-detail"><span class="method">RemoveMoistureAtNearest()</span><br>Priority-based competition</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- DROUGHT PATH -->
+                        <div class="split-path">
+                            <div class="flow-node">
+                                <div class="node-box action">
+                                    <div class="node-label">Increment Drought</div>
+                                    <div class="node-detail">timeInDrought += checkInterval</div>
+                                </div>
+                            </div>
+                            
+                            <div class="arrow"></div>
+                            
+                            <div class="flow-node">
+                                <div class="node-box decision">
+                                    <div class="node-label">Drought > timeToDie?</div>
+                                    <div class="node-detail">Default: 10 seconds</div>
+                                </div>
+                            </div>
+                            
+                            <div class="split-arrow">
+                                <div class="split-arrow-branch">
+                                    <div class="arrow-label">YES</div>
+                                    <div class="branch-line"></div>
+                                </div>
+                                <div class="split-arrow-branch">
+                                    <div class="arrow-label">NO</div>
+                                    <div class="branch-line"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="split-container">
+                                <div class="split-path">
+                                    <div class="flow-node">
+                                        <div class="node-box action">
+                                            <div class="node-label">Start Death</div>
+                                            <div class="node-detail">
+                                                state = Wilting<br>
+                                                Start <span class="method">DeathCycleCoroutine()</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="split-path">
+                                    <div class="flow-node">
+                                        <div class="node-box end">
+                                            <div class="node-label">Continue Waiting</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- NOT HEALTHY PATH -->
+                <div class="split-path">
+                    <div class="flow-node">
+                        <div class="node-box end">
+                            <div class="node-label">Skip (Wilting/Decaying/Dead)</div>
+                            <div class="node-detail">Plant handled by DeathCycleCoroutine</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- LOOP BACK -->
+            <div class="loop-arrow"></div>
+            <div class="loop-label">Loop back to "Wait for Time Interval"</div>
+        </div>
+        
+        <div class="note">
+            <strong>CRITICAL FLOW INSIGHTS:</strong>
+            • <strong>Per-Plant Processing:</strong> Each plant evaluated independently every cycle - not event-driven.<br><br>
+            • <strong>State Check First:</strong> Only Healthy plants can grow or accumulate drought time.<br><br>
+            • <strong>Drought Accumulation:</strong> Only happens when CanGrow() fails (no suitable moisture).<br><br>
+            • <strong>Growth = Multi-Factor:</strong> Base increment × 4 modifiers (vigor, moisture quality, etiolation length/width).<br><br>
+            • <strong>Death Trigger:</strong> When drought timer exceeds threshold, spawns separate death coroutine.<br><br>
+            • <strong>Infinite Loop:</strong> GrowthLoop runs forever (while true) - stopped only by scene change.
+        </div>
+    </div>
+</body>
+</html>

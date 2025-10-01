@@ -1,0 +1,69 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Electron build output
+dist/
+dist-*/
+release/
+out/
+*.unpacked/
+
+# Electron-builder directories
+electron-builder.yml
+build/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.swp
+*~
+
+# IDE files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Journal entries (uncomment if you want to keep entries private)
+# journal_entries/*.json
+# journal_entries/*.html
+# !journal_entries/questions.json
+
+# Keep the journal_entries directory but not its contents
+# journal_entries/*
+# !journal_entries/.gitkeep
+# !journal_entries/questions.json
+
+# Temporary files
+*.tmp
+*.temp
+.temp/
+.tmp/
+
+# Package lock files (uncomment one if you want consistency across machines)
+# package-lock.json
+# yarn.lock

@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moisture Competition Step-by-Step</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            background: #ffffff;
+            color: #000000;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            border-bottom: 3px solid #000;
+            padding-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .priority-formula {
+            background: #FFF5E5;
+            border: 3px solid #f59e0b;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .formula-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #f59e0b;
+        }
+        
+        .formula {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .formula-note {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .step {
+            background: #fff;
+            border: 3px solid #000;
+            padding: 18px;
+            margin-bottom: 18px;
+            position: relative;
+        }
+        
+        .step-number {
+            position: absolute;
+            top: -15px;
+            left: 15px;
+            background: #000;
+            color: #fff;
+            padding: 4px 12px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .step-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding-top: 5px;
+        }
+        
+        .step-content {
+            font-size: 13px;
+            line-height: 1.7;
+            color: #333;
+        }
+        
+        .code {
+            background: #f5f5f5;
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 3px solid #2563eb;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        
+        .scenario {
+            background: #E5F0FF;
+            border: 2px solid #2563eb;
+            padding: 18px;
+            margin-top: 30px;
+        }
+        
+        .scenario-header {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2563eb;
+        }
+        
+        .plant-row {
+            display: flex;
+            gap: 15px;
+            margin: 12px 0;
+            padding: 12px;
+            background: #fff;
+            border: 2px solid #ddd;
+        }
+        
+        .plant-info {
+            flex: 1;
+            font-size: 13px;
+        }
+        
+        .plant-name {
+            font-weight: bold;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+        
+        .plant-stats {
+            font-size: 12px;
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .priority-score {
+            padding: 8px 12px;
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            font-weight: bold;
+            text-align: center;
+            min-width: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .priority-label {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        
+        .priority-value {
+            font-size: 16px;
+            color: #f59e0b;
+        }
+        
+        .winner {
+            background: #dcfce7;
+            border-color: #16a34a;
+        }
+        
+        .winner .priority-score {
+            background: #dcfce7;
+            border-color: #16a34a;
+        }
+        
+        .winner .priority-value {
+            color: #16a34a;
+        }
+        
+        .result-box {
+            background: #fff;
+            border: 3px solid #16a34a;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .note {
+            margin-top: 30px;
+            padding: 14px;
+            background: #f9f9f9;
+            border-left: 4px solid #666;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+        
+        .note strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        @media print {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MOISTURE COMPETITION STEP-BY-STEP</h1>
+        <div class="subtitle">Priority-based system for contested soil moisture</div>
+        
+        <!-- Priority Formula -->
+        <div class="priority-formula">
+            <div class="formula-title">COMPETITION PRIORITY FORMULA</div>
+            <div class="formula">Priority = seedVigor × (plantWidth × 2 + plantLength)</div>
+            <div class="formula-note">
+                Higher priority = wins contested moisture<br>
+                Width weighted 2x (represents root spread advantage)
+            </div>
+        </div>
+        
+        <!-- Step 1 -->
+        <div class="step">
+            <div class="step-number">STEP 1</div>
+            <div class="step-title">Plant Needs Moisture</div>
+            <div class="step-content">
+                After a plant successfully grows, it must consume moisture from a nearby soil tile.<br><br>
+                
+                The plant calls <span style="background: #e5e5e5; padding: 2px 6px; border-radius: 2px;">RemoveMoistureAtNearest()</span>
+                
+                <div class="code">
+                    Goal: Find the closest suitable tile and remove moisture<br>
+                    Constraint: Must be within root radius
+                </div>
+            </div>
+        </div>
+        
+        <!-- Step 2 -->
+        <div class="step">
+            <div class="step-number">STEP 2</div>
+            <div class="step-title">Calculate Own Priority</div>
+            <div class="step-content">
+                First, the plant calculates its own competition priority score.
+                
+                <div class="code">
+                    myPriority = ManagerWorld.GetCompetitionPriority(<br>
+                    &nbsp;&nbsp;seedVigor,<br>
+                    &nbsp;&nbsp;plantWidth,<br>
+                    &nbsp;&nbsp;plantLength<br>
+                    )
+                </div>
+                
+                This score represents the plant's ability to "win" contested resources based on:<br>
+                • Inherent strength (vigor)<br>
+                • Size advantage (biomass = width × 2 + length)
+            </div>
+        </div>
+        
+        <!-- Step 3 -->
+        <div class="step">
+            <div class="step-number">STEP 3</div>
+            <div class="step-title">Scan for Suitable Tiles</div>
+            <div class="step-content">
+                Loop through all soil tiles to find candidates:
+                
+                <div class="code">
+                    For each tile:<br>
+                    &nbsp;&nbsp;• Check if moisture is in acceptable range (minMoisture to maxMoisture)<br>
+                    &nbsp;&nbsp;• Calculate distance from plant to tile<br>
+                    &nbsp;&nbsp;• Check if distance ≤ root radius<br>
+                    &nbsp;&nbsp;• Track the closest suitable tile
+                </div>
+                
+                <strong>Root radius calculation:</strong><br>
+                rootRadius = defaultRootSpreadDistance + (rootDistanceMultiplier × widthGrowth)
+            </div>
+        </div>
+        
+        <!-- Step 4 -->
+        <div class="step">
+            <div class="step-number">STEP 4</div>
+            <div class="step-title">Check for Competing Plants</div>
+            <div class="step-content">
+                For each candidate tile, check if other plants also have access to it:
+                
+                <div class="code">
+                    For each other plant:<br>
+                    &nbsp;&nbsp;• Skip if same plant (self)<br>
+                    &nbsp;&nbsp;• Skip if not Healthy state<br>
+                    &nbsp;&nbsp;• Calculate distance from other plant to tile<br>
+                    &nbsp;&nbsp;• If distance ≤ other plant's root radius → COMPETITION!
+                </div>
+                
+                If competition detected, compare priorities.
+            </div>
+        </div>
+        
+        <!-- Step 5 -->
+        <div class="step">
+            <div class="step-number">STEP 5</div>
+            <div class="step-title">Priority Comparison</div>
+            <div class="step-content">
+                For each competing plant on the same tile:
+                
+                <div class="code">
+                    otherPriority = ManagerWorld.GetCompetitionPriority(<br>
+                    &nbsp;&nbsp;otherPlant.seedVigor,<br>
+                    &nbsp;&nbsp;otherPlant.plantWidth,<br>
+                    &nbsp;&nbsp;otherPlant.plantLength<br>
+                    )<br><br>
+                    
+                    if (otherPriority > myPriority):<br>
+                    &nbsp;&nbsp;canTake = false  // I lose, skip this tile<br>
+                    &nbsp;&nbsp;break
+                </div>
+                
+                <strong>Result:</strong> If any competitor has higher priority, this plant cannot use this tile.
+            </div>
+        </div>
+        
+        <!-- Step 6 -->
+        <div class="step">
+            <div class="step-number">STEP 6</div>
+            <div class="step-title">Take Moisture or Move On</div>
+            <div class="step-content">
+                <strong>If plant has highest priority (or no competition):</strong><br>
+                • Mark this tile as a candidate<br>
+                • Continue checking to find the closest suitable tile<br><br>
+                
+                <strong>After checking all tiles:</strong><br>
+                • Remove moisture from the closest tile where plant had highest priority<br>
+                
+                <div class="code">
+                    soilManager.DecreaseMoisture(x, y, moistureDecrement)
+                </div>
+                
+                <strong>If no valid tiles found:</strong><br>
+                • Plant takes no moisture this cycle (will accumulate drought time)
+            </div>
+        </div>
+        
+        <!-- Example Scenario -->
+        <div class="scenario">
+            <div class="scenario-header">EXAMPLE: Three Plants Competing for One Tile</div>
+            
+            <div class="plant-row">
+                <div class="plant-info">
+                    <div class="plant-name">Plant A (Small, Vigorous)</div>
+                    <div class="plant-stats">
+                        Vigor: 1.3 | Width: 0.15 | Length: 0.03<br>
+                        Distance to tile: 0.8 units
+                    </div>
+                </div>
+                <div class="priority-score">
+                    <div class="priority-label">PRIORITY</div>
+                    <div class="priority-value">0.429</div>
+                </div>
+            </div>
+            
+            <div class="plant-row winner">
+                <div class="plant-info">
+                    <div class="plant-name">Plant B (Large, Average)</div>
+                    <div class="plant-stats">
+                        Vigor: 1.0 | Width: 0.25 | Length: 0.08<br>
+                        Distance to tile: 0.9 units
+                    </div>
+                </div>
+                <div class="priority-score">
+                    <div class="priority-label">PRIORITY</div>
+                    <div class="priority-value">0.580 ✓</div>
+                </div>
+            </div>
+            
+            <div class="plant-row">
+                <div class="plant-info">
+                    <div class="plant-name">Plant C (Medium, Weak)</div>
+                    <div class="plant-stats">
+                        Vigor: 0.8 | Width: 0.18 | Length: 0.05<br>
+                        Distance to tile: 0.7 units (closest!)
+                    </div>
+                </div>
+                <div class="priority-score">
+                    <div class="priority-label">PRIORITY</div>
+                    <div class="priority-value">0.328</div>
+                </div>
+            </div>
+            
+            <div class="result-box">
+                RESULT: Plant B wins the moisture despite being farthest away.<br>
+                Size advantage (width × 2 + length = 0.58) overcomes closer competitors.
+            </div>
+        </div>
+        
+        <div class="note">
+            <strong>KEY INSIGHTS:</strong>
+            • <strong>Size Dominance:</strong> Larger plants almost always win contested moisture (width weighted 2x).<br><br>
+            • <strong>Distance Doesn't Matter:</strong> Only used to determine IF a plant can reach a tile. Priority determines WHO gets it.<br><br>
+            • <strong>Rich Get Richer:</strong> Big plants get more moisture → grow bigger → win more moisture. Creates dominance hierarchies.<br><br>
+            • <strong>Multiple Checks:</strong> Each plant checks EVERY other healthy plant for EVERY tile. Computationally expensive but ensures fair competition.<br><br>
+            • <strong>Zero-Sum Game:</strong> Only one plant can take moisture from a tile per cycle. Losers must find uncontested tiles or face drought.
+        </div>
+    </div>
+</body>
+</html>
