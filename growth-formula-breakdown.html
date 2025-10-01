@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Growth Formula Breakdown</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            background: #ffffff;
+            color: #000000;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            border-bottom: 3px solid #000;
+            padding-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .formula-section {
+            background: #fff;
+            border: 3px solid #000;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .formula-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #000;
+        }
+        
+        .main-formula {
+            background: #f5f5f5;
+            padding: 20px;
+            border: 2px solid #666;
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+        
+        .formula-line {
+            margin: 8px 0;
+        }
+        
+        .multiply {
+            color: #dc2626;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .breakdown-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        .factor-box {
+            border: 2px solid #000;
+            padding: 15px;
+            background: #fafafa;
+        }
+        
+        .factor-name {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #666;
+        }
+        
+        .factor-source {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+            font-style: italic;
+        }
+        
+        .factor-range {
+            font-size: 14px;
+            margin-bottom: 6px;
+            padding: 8px;
+            background: #e5e5e5;
+            border-left: 3px solid #2563eb;
+        }
+        
+        .factor-desc {
+            font-size: 12px;
+            color: #555;
+            line-height: 1.6;
+            margin-top: 8px;
+        }
+        
+        .example-section {
+            background: #E5F0FF;
+            border: 2px solid #2563eb;
+            padding: 20px;
+            margin-top: 25px;
+        }
+        
+        .example-header {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #2563eb;
+        }
+        
+        .example-calc {
+            font-size: 13px;
+            line-height: 2;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .example-step {
+            margin: 8px 0;
+            padding-left: 15px;
+        }
+        
+        .result {
+            background: #fff;
+            padding: 10px;
+            margin-top: 12px;
+            border: 2px solid #2563eb;
+            font-weight: bold;
+        }
+        
+        .note {
+            margin-top: 30px;
+            padding: 14px;
+            background: #f9f9f9;
+            border-left: 4px solid #666;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+        
+        .note strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        @media print {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>GROWTH FORMULA BREAKDOWN</h1>
+        <div class="subtitle">Mathematical decomposition of plant growth calculation</div>
+        
+        <!-- LENGTH GROWTH -->
+        <div class="formula-section">
+            <div class="formula-header">LENGTH GROWTH (Height/Vertical)</div>
+            
+            <div class="main-formula">
+                <div class="formula-line">lengthGrowth = baseIncrement <span class="multiply">×</span> seedVigor <span class="multiply">×</span> moistureQuality <span class="multiply">×</span> etiolationLength</div>
+            </div>
+            
+            <div class="breakdown-grid">
+                <div class="factor-box">
+                    <div class="factor-name">1. Base Increment</div>
+                    <div class="factor-source">Inspector: growthIncrementLength</div>
+                    <div class="factor-range">Default: 0.002 units per cycle</div>
+                    <div class="factor-desc">
+                        Fixed growth rate set by designer. This is the baseline before any modifiers apply.
+                    </div>
+                </div>
+                
+                <div class="factor-box">
+                    <div class="factor-name">2. Seed Vigor</div>
+                    <div class="factor-source">Assigned at plant birth (random)</div>
+                    <div class="factor-range">Range: 0.7 to 1.3 (average: 1.0)</div>
+                    <div class="factor-desc">
+                        Inherent plant strength. Strong plants (vigor > 1.0) grow faster. Weak plants (vigor < 1.0) grow slower. This never changes after birth.
+                    </div>
+                </div>
+                
+                <div class="factor-box">
+                    <div class="factor-name">3. Moisture Quality</div>
+                    <div class="factor-source">Calculated by GetMoistureQualityModifier()</div>
+                    <div class="factor-range">Range: 0.5 to 1.0 (marginalMoistureGrowthRate to 1.0)</div>
+                    <div class="factor-desc">
+                        How close the available moisture is to optimal (default: 0.5).<br>
+                        • At optimal moisture → 1.0x growth<br>
+                        • At edge of acceptable range → 0.5x growth<br>
+                        • Outside range → Can't grow (drought begins)
+                    </div>
+                </div>
+                
+                <div class="factor-box">
+                    <div class="factor-name">4. Etiolation Length Modifier</div>
+                    <div class="factor-source">Calculated by GetEtiolationModifier()</div>
+                    <div class="factor-range">Range: 1.0 to etiolationStrength (default: 2.0)</div>
+                    <div class="factor-desc">
+                        Competition response - plants grow TALLER when crowded (reaching for light).<br>
+                        • 0 neighbors → 1.0x length (normal)<br>
+                        • 5+ neighbors → 2.0x length (stretched tall)
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- WIDTH GROWTH -->
+        <div class="formula-section">
+            <div class="formula-header">WIDTH GROWTH (Thickness/Roots)</div>
+            
+            <div class="main-formula">
+                <div class="formula-line">widthGrowth = baseIncrement <span class="multiply">×</span> seedVigor <span class="multiply">×</span> moistureQuality <span class="multiply">×</span> etiolationWidth</div>
+            </div>
+            
+            <div class="breakdown-grid">
+                <div class="factor-box">
+                    <div class="factor-name">1. Base Increment</div>
+                    <div class="factor-source">Inspector: growthIncrementWidth</div>
+                    <div class="factor-range">Default: 0.0001 units per cycle</div>
+                    <div class="factor-desc">
+                        Fixed growth rate set by designer. Note: Much smaller than length increment (plants grow slower in width).
+                    </div>
+                </div>
+                
+                <div class="factor-box">
+                    <div class="factor-name">2. Seed Vigor</div>
+                    <div class="factor-source">Same as length (shared value)</div>
+                    <div class="factor-range">Range: 0.7 to 1.3</div>
+                    <div class="factor-desc">
+                        Same vigor value affects both dimensions equally.
+                    </div>
+                </div>
+                
+                <div class="factor-box">
+                    <div class="factor-name">3. Moisture Quality</div>
+                    <div class="factor-source">Same as length (shared value)</div>
+                    <div class="factor-range">Range: 0.5 to 1.0</div>
+                    <div class="factor-desc">
+                        Same moisture quality affects both dimensions equally.
+                    </div>
+                </div>
+                
+                <div class="factor-box">
+                    <div class="factor-name">4. Etiolation Width Modifier</div>
+                    <div class="factor-source">Calculated by GetEtiolationModifier()</div>
+                    <div class="factor-range">Range: 1.0 to 1/etiolationStrength (default: 0.5)</div>
+                    <div class="factor-desc">
+                        Competition response - plants grow THINNER when crowded (opposite of length).<br>
+                        • 0 neighbors → 1.0x width (normal)<br>
+                        • 5+ neighbors → 0.5x width (thin and stretched)
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- EXAMPLE CALCULATION -->
+        <div class="example-section">
+            <div class="example-header">EXAMPLE: Crowded Plant in Good Conditions</div>
+            <div class="example-calc">
+                <strong>Given:</strong><br>
+                <div class="example-step">• Base length increment = 0.002</div>
+                <div class="example-step">• Seed vigor = 1.2 (strong plant)</div>
+                <div class="example-step">• Moisture quality = 0.9 (near optimal)</div>
+                <div class="example-step">• 3 neighbors detected → etiolation intensity = 3/5 = 0.6</div>
+                <div class="example-step">• Length modifier = lerp(1.0, 2.0, 0.6) = 1.6</div>
+                <div class="example-step">• Width modifier = lerp(1.0, 0.5, 0.6) = 0.7</div>
+                
+                <div class="result">
+                    <strong>Length growth:</strong> 0.002 × 1.2 × 0.9 × 1.6 = 0.003456 units<br>
+                    <strong>Width growth:</strong> 0.0001 × 1.2 × 0.9 × 0.7 = 0.0000756 units
+                </div>
+                
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 2px solid #2563eb; font-size: 12px;">
+                    <strong>Result:</strong> Plant grows 77% taller than normal but only 70% as thick → tall, thin plant stretching for light
+                </div>
+            </div>
+        </div>
+        
+        <div class="note">
+            <strong>KEY INSIGHTS:</strong>
+            • <strong>Multiplicative System:</strong> All factors multiply together - a poor value in any factor drastically reduces growth.<br><br>
+            • <strong>Etiolation Creates Shape:</strong> Same plant can be short/thick (isolated) or tall/thin (crowded) based purely on neighbors.<br><br>
+            • <strong>Vigor is Permanent:</strong> Strong plants (high vigor) always have an advantage throughout their life.<br><br>
+            • <strong>Width Affects Roots:</strong> rootRadius = base + (widthGrowth × multiplier) - wider plants have larger root zones.
+        </div>
+    </div>
+</body>
+</html>
