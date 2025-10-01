@@ -122,20 +122,16 @@
             background: #fff;
             overflow: hidden;
             position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            transition: margin-left 0.3s ease;
+        }
+        
+        .sidebar.hidden ~ .main-content {
+            margin-left: -320px;
         }
         
         .iframe-container {
             width: 100%;
             height: 100%;
-            max-width: calc(100vw - 320px);
-            transition: max-width 0.3s ease;
-        }
-        
-        .sidebar.hidden ~ .main-content .iframe-container {
-            max-width: calc(100vw - 320px);
         }
         
         .iframe-container iframe {
@@ -150,8 +146,6 @@
             align-items: center;
             justify-content: center;
             height: 100%;
-            width: 100%;
-            max-width: calc(100vw - 320px);
             padding: 40px;
             text-align: center;
         }
