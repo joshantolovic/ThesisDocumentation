@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Ecosystem - Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ecf0f1;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+        
+        .header .subtitle {
+            font-size: 16px;
+            color: #bdc3c7;
+            letter-spacing: 1px;
+        }
+        
+        .version-badge {
+            display: inline-block;
+            background: #3498db;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 15px;
+            letter-spacing: 1px;
+        }
+        
+        .sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .section-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 40px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        
+        .section-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #3498db;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .section-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .section-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #3498db;
+        }
+        
+        .section-description {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #bdc3c7;
+        }
+        
+        .section-meta {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 12px;
+            color: #95a5a6;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        
+        @media (max-width: 800px) {
+            .sections {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Plant Ecosystem</h1>
+            <div class="subtitle">DOCUMENTATION HUB</div>
+            <div class="version-badge">VERSION 0.3</div>
+        </div>
+        
+        <div class="sections">
+            <a href="v0.3/technical/tech-nav.html" class="section-card">
+                <span class="section-icon">⚙️</span>
+                <div class="section-title">Technical Documentation</div>
+                <div class="section-description">
+                    Comprehensive programmer reference covering system architecture, timing diagrams, growth formulas, and state machines. Designed for developers implementing or extending the simulation.
+                </div>
+                <div class="section-meta">
+                    8 detailed diagrams • System internals • Algorithm breakdowns
+                </div>
+            </a>
+            
+            <a href="v0.3/designer/designer-nav.html" class="section-card">
+                <span class="section-icon">🎨</span>
+                <div class="section-title">Designer Documentation</div>
+                <div class="section-description">
+                    Visual guides and parameter references for game designers, balancers, and content creators. Focus on behavior tuning and ecosystem configuration.
+                </div>
+                <div class="section-meta">
+                    Visual diagrams • Parameter guides • Design patterns
+                </div>
+            </a>
+        </div>
+        
+        <div class="footer">
+            Unity Plant Ecosystem Simulation • v0.3 Documentation
+        </div>
+    </div>
+</body>
+</html>
