@@ -22,6 +22,7 @@
             height: 100vh;
         }
         
+        /* Sidebar */
         .sidebar {
             width: 320px;
             background: #2c3e50;
@@ -115,24 +116,17 @@
             color: #ecf0f1;
         }
         
-        .sidebar::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .sidebar::-webkit-scrollbar-track {
-            background: #34495e;
-        }
-        
-        .sidebar::-webkit-scrollbar-thumb {
-            background: #3498db;
-            border-radius: 4px;
-        }
-        
+        /* Main Content */
         .main-content {
             flex: 1;
             background: #fff;
             overflow: hidden;
             position: relative;
+            transition: margin-left 0.3s ease;
+        }
+        
+        .sidebar.hidden ~ .main-content {
+            margin-left: -320px;
         }
         
         .iframe-container {
@@ -182,10 +176,25 @@
             color: #95a5a6;
             font-style: italic;
         }
+        
+        /* Scrollbar styling */
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .sidebar::-webkit-scrollbar-track {
+            background: #34495e;
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #3498db;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Sidebar Navigation -->
         <div class="sidebar">
             <a href="../../index.html" class="back-button">Back to Home</a>
             
@@ -237,6 +246,7 @@
             </div>
         </div>
         
+        <!-- Main Content Area -->
         <div class="main-content">
             <div class="welcome-screen" id="welcomeScreen">
                 <h1>Technical Documentation</h1>
@@ -258,8 +268,10 @@
         const diagramFrame = document.getElementById('diagramFrame');
         const sidebar = document.querySelector('.sidebar');
         
+        // Keyboard shortcut (H key)
         document.addEventListener('keydown', (e) => {
             if (e.key === 'h' || e.key === 'H') {
+                // Don't trigger if user is typing in an input field
                 if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
                     sidebar.classList.toggle('hidden');
                 }
@@ -268,14 +280,20 @@
         
         navItems.forEach(item => {
             item.addEventListener('click', function() {
+                // Remove active class from all items
                 navItems.forEach(nav => nav.classList.remove('active'));
+                
+                // Add active class to clicked item
                 this.classList.add('active');
                 
+                // Get diagram filename
                 const diagramId = this.getAttribute('data-diagram');
                 
+                // Hide welcome screen, show iframe
                 welcomeScreen.style.display = 'none';
                 iframeContainer.style.display = 'block';
                 
+                // Load diagram (relative to this file)
                 diagramFrame.src = diagramId + '.html';
             });
         });
