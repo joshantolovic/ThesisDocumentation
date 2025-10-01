@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f5f5;
+    padding: 40px 20px;
+  }
+  
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  
+  h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 32px;
+  }
+  
+  .subtitle {
+    text-align: center;
+    color: #7f8c8d;
+    margin-bottom: 50px;
+    font-size: 16px;
+  }
+  
+  /* Timeline flow */
+  .timeline {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    position: relative;
+    margin-bottom: 60px;
+  }
+  
+  /* Connecting line behind states */
+  .timeline::before {
+    content: '';
+    position: absolute;
+    top: 80px;
+    left: 150px;
+    right: 150px;
+    height: 4px;
+    background: linear-gradient(to right, #27ae60 0%, #27ae60 33%, #f39c12 33%, #f39c12 66%, #8b4513 66%, #8b4513 100%);
+    z-index: 0;
+  }
+  
+  /* State boxes */
+  .state {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .state-box {
+    width: 100%;
+    max-width: 240px;
+    padding: 24px;
+    border-radius: 12px;
+    border: 3px solid;
+    background: white;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  
+  .state-box h2 {
+    font-size: 20px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  .state-box .description {
+    font-size: 14px;
+    color: #2c3e50;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+  
+  .state-box .stats {
+    font-size: 12px;
+    color: #7f8c8d;
+    font-style: italic;
+    line-height: 1.5;
+    background: #f8f9fa;
+    padding: 8px;
+    border-radius: 6px;
+  }
+  
+  /* State colors */
+  .healthy { border-color: #27ae60; }
+  .healthy h2 { color: #27ae60; }
+  
+  .wilting { border-color: #f39c12; }
+  .wilting h2 { color: #f39c12; }
+  
+  .decaying { border-color: #e67e22; }
+  .decaying h2 { color: #e67e22; }
+  
+  .dead { border-color: #8b4513; }
+  .dead h2 { color: #8b4513; }
+  
+  /* Transition arrows */
+  .transition {
+    position: absolute;
+    bottom: -120px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    text-align: center;
+  }
+  
+  .transition-trigger {
+    background: #fff3cd;
+    border: 2px solid #f39c12;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  .transition-trigger strong {
+    color: #e74c3c;
+    display: block;
+    margin-bottom: 4px;
+  }
+  
+  .transition-arrow {
+    width: 3px;
+    height: 40px;
+    background: #f39c12;
+    margin: 8px auto;
+    position: relative;
+  }
+  
+  .transition-arrow::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 12px solid #f39c12;
+  }
+  
+  /* Growth conditions section */
+  .growth-section {
+    margin-top: 180px;
+    padding: 24px;
+    background: #e8f5e9;
+    border-radius: 12px;
+    border-left: 4px solid #27ae60;
+  }
+  
+  .growth-section h3 {
+    color: #27ae60;
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+  
+  .growth-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+  }
+  
+  .growth-factor {
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+    border-left: 3px solid #27ae60;
+  }
+  
+  .growth-factor h4 {
+    color: #27ae60;
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+  
+  .growth-factor p {
+    font-size: 14px;
+    color: #2c3e50;
+    line-height: 1.6;
+  }
+  
+  .growth-factor .detail {
+    font-size: 12px;
+    color: #7f8c8d;
+    font-style: italic;
+    margin-top: 8px;
+  }
+  
+  /* Death triggers section */
+  .death-section {
+    margin-top: 32px;
+    padding: 24px;
+    background: #ffebee;
+    border-radius: 12px;
+    border-left: 4px solid #e74c3c;
+  }
+  
+  .death-section h3 {
+    color: #e74c3c;
+    font-size: 22px;
+    margin-bottom: 16px;
+  }
+  
+  .death-warning {
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+    border-left: 3px solid #e74c3c;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #2c3e50;
+  }
+  
+  .death-warning strong {
+    color: #e74c3c;
+  }
+  
+  /* Legend */
+  .legend {
+    margin-top: 32px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 2px solid #95a5a6;
+  }
+  
+  .legend h3 {
+    font-size: 16px;
+    margin-bottom: 12px;
+    color: #2c3e50;
+  }
+  
+  .legend-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 12px;
+  }
+  
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .legend-color {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    border: 3px solid;
+  }
+  
+  @media print {
+    body {
+      background: white;
+      padding: 0;
+    }
+    .container {
+      box-shadow: none;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>A Plant's Life Story</h1>
+    <p class="subtitle">Birth → Growth → Competition → Death</p>
+    
+    <!-- Timeline of states -->
+    <div class="timeline">
+      <!-- Birth/Healthy -->
+      <div class="state">
+        <div class="state-box healthy">
+          <h2>🌱 Healthy</h2>
+          <p class="description">Plant is growing actively, accessing water within root radius</p>
+          <div class="stats">
+            Color: Green gradient<br>
+            Length/Width: Growing<br>
+            Drought Timer: 0
+          </div>
+        </div>
+        <div class="transition">
+          <div class="transition-arrow"></div>
+          <div class="transition-trigger">
+            <strong>⚠️ Trigger:</strong>
+            Can't find water in root radius for <strong>10 seconds</strong> (timeToDie)
+          </div>
+        </div>
+      </div>
+      
+      <!-- Wilting -->
+      <div class="state">
+        <div class="state-box wilting">
+          <h2>🥀 Wilting</h2>
+          <p class="description">Plant has entered drought stress, no longer growing</p>
+          <div class="stats">
+            Color: Still green<br>
+            Length/Width: Frozen<br>
+            Drought Timer: 10+ sec
+          </div>
+        </div>
+        <div class="transition">
+          <div class="transition-arrow"></div>
+          <div class="transition-trigger">
+            <strong>⏱️ Random delay:</strong>
+            1-5 seconds after wilting starts
+          </div>
+        </div>
+      </div>
+      
+      <!-- Decaying -->
+      <div class="state">
+        <div class="state-box decaying">
+          <h2>🍂 Decaying</h2>
+          <p class="description">Plant turns brown, visibly dead but still present</p>
+          <div class="stats">
+            Color: Brown gradient<br>
+            Length/Width: Frozen<br>
+            State: Permanent decline
+          </div>
+        </div>
+        <div class="transition">
+          <div class="transition-arrow"></div>
+          <div class="transition-trigger">
+            <strong>⏱️ Random delay:</strong>
+            Another 1-5 seconds
+          </div>
+        </div>
+      </div>
+      
+      <!-- Dead -->
+      <div class="state">
+        <div class="state-box dead">
+          <h2>💀 Dead</h2>
+          <p class="description">Plant remains forever as brown vegetation, part of ecosystem history</p>
+          <div class="stats">
+            Color: Dark brown<br>
+            Length/Width: Frozen<br>
+            State: Permanent (can be picked up)
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- What makes plants grow (Healthy state details) -->
+    <div class="growth-section">
+      <h3>✨ What Makes Plants Grow (While Healthy)</h3>
+      <div class="growth-grid">
+        <div class="growth-factor">
+          <h4>💪 Seed Vigor</h4>
+          <p>Each plant born with random strength multiplier</p>
+          <p class="detail">Range: 0.7-1.3x<br>Affects: Growth rate & competition priority</p>
+        </div>
+        
+        <div class="growth-factor">
+          <h4>💧 Moisture Quality</h4>
+          <p>How close is the best available water to optimal?</p>
+          <p class="detail">Optimal: 0.5 (50% moisture)<br>At edges (0.3 or 0.7): Growth reduced to 50%</p>
+        </div>
+        
+        <div class="growth-factor">
+          <h4>☀️ Light Competition (Etiolation)</h4>
+          <p>Crowded plants grow tall/thin, isolated plants grow short/wide</p>
+          <p class="detail">0 neighbors: Normal (1.0x length, 1.0x width)<br>5+ neighbors: Max (2.0x length, 0.5x width)</p>
+        </div>
+        
+        <div class="growth-factor">
+          <h4>🌿 Root Expansion</h4>
+          <p>As plants grow wider, their roots spread further</p>
+          <p class="detail">Root radius = 1.0 + (1.0 × width growth)<br>Bigger plants access more distant water</p>
+        </div>
+        
+        <div class="growth-factor">
+          <h4>⚔️ Water Competition</h4>
+          <p>Multiple plants wanting same water tile? Highest priority wins</p>
+          <p class="detail">Priority = vigor × (width×2 + length)<br>Loser must find different tile</p>
+        </div>
+        
+        <div class="growth-factor">
+          <h4>📏 Growth Formula</h4>
+          <p>Final growth rate per cycle:</p>
+          <p class="detail"><strong>Growth = base × vigor × moisture × etiolation</strong><br>Applied to both length and width separately</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Death trigger details -->
+    <div class="death-section">
+      <h3>☠️ What Kills Plants</h3>
+      <div class="death-warning">
+        <strong>Primary cause:</strong> Unable to find water within root radius.<br><br>
+        
+        <strong>Why this happens:</strong><br>
+        • All nearby soil tiles are too dry (moisture < 0.3)<br>
+        • All nearby soil tiles are too wet (moisture > 0.7)<br>
+        • Other plants with higher priority are taking all available water<br>
+        • Plant's roots haven't expanded enough to reach distant water<br><br>
+        
+        <strong>The drought timer:</strong> Once a plant can't grow for 10 consecutive seconds (timeToDie), it enters the death sequence and cannot recover, even if water becomes available again.
+      </div>
+    </div>
+    
+    <!-- Legend -->
+    <div class="legend">
+      <h3>State Color Key:</h3>
+      <div class="legend-grid">
+        <div class="legend-item">
+          <div class="legend-color" style="border-color: #27ae60; background: #e8f5e9;"></div>
+          <span><strong>Healthy:</strong> Actively growing, green</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="border-color: #f39c12; background: #fff3cd;"></div>
+          <span><strong>Wilting:</strong> Drought stress, still green</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="border-color: #e67e22; background: #ffe6d5;"></div>
+          <span><strong>Decaying:</strong> Turning brown, visibly dead</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="border-color: #8b4513; background: #f5e6d3;"></div>
+          <span><strong>Dead:</strong> Permanent brown vegetation</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f5f5;
+    padding: 40px 20px;
+  }
+  
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  
+  h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 32px;
+  }
+  
+  .subtitle {
+    text-align: center;
+    color: #7f8c8d;
+    margin-bottom: 40px;
+    font-size: 16px;
+  }
+  
+  /* Spatial visualization */
+  .spatial-view {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 40px;
+    margin-bottom: 40px;
+    position: relative;
+    min-height: 500px;
+  }
+  
+  .spatial-title {
+    text-align: center;
+    font-size: 20px;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-weight: 600;
+  }
+  
+  /* Top-down view grid */
+  .soil-grid {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    height: 450px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, #d4a574 0%, #b8956a 50%, #8b7355 100%);
+    border-radius: 8px;
+    border: 3px solid #8b4513;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    gap: 1px;
+  }
+  
+  .soil-tile {
+    background: #c19a6b;
+    position: relative;
+    transition: all 0.3s;
+  }
+  
+  .soil-tile.wet { background: #6ba3c1; }
+  .soil-tile.optimal { background: #4a90b8; }
+  .soil-tile.contested { background: #f39c12; box-shadow: inset 0 0 10px rgba(243, 156, 18, 0.5); }
+  
+  /* Plants overlay */
+  .plant-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  
+  .plant {
+    position: absolute;
+    transform: translate(-50%, -50%);
+  }
+  
+  .plant-root-zone {
+    position: absolute;
+    border: 3px dashed;
+    border-radius: 50%;
+    opacity: 0.4;
+  }
+  
+  .plant-stem {
+    position: absolute;
+    width: 6px;
+    background: #27ae60;
+    border-radius: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0;
+  }
+  
+  .plant-base {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #27ae60;
+    border: 2px solid white;
+    left: 50%;
+    bottom: 0;
+    transform: translate(-50%, 50%);
+    z-index: 10;
+  }
+  
+  .plant-label {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  
+  /* Plant A (strong) */
+  .plant-a .plant-root-zone { 
+    width: 240px; 
+    height: 240px; 
+    border-color: #27ae60;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .plant-a .plant-stem { height: 60px; }
+  .plant-a .plant-base { background: #27ae60; }
+  .plant-a .plant-label { color: #27ae60; }
+  
+  /* Plant B (medium) */
+  .plant-b .plant-root-zone { 
+    width: 180px; 
+    height: 180px; 
+    border-color: #f39c12;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .plant-b .plant-stem { height: 45px; }
+  .plant-b .plant-base { background: #f39c12; }
+  .plant-b .plant-label { color: #f39c12; }
+  
+  /* Plant C (weak) */
+  .plant-c .plant-root-zone { 
+    width: 140px; 
+    height: 140px; 
+    border-color: #e74c3c;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .plant-c .plant-stem { height: 35px; }
+  .plant-c .plant-base { background: #e74c3c; }
+  .plant-c .plant-label { color: #e74c3c; }
+  
+  /* Priority calculation section */
+  .priority-section {
+    margin-top: 40px;
+    padding: 24px;
+    background: #fff3cd;
+    border-radius: 12px;
+    border-left: 4px solid #f39c12;
+  }
+  
+  .priority-section h3 {
+    color: #f39c12;
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+  
+  .priority-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+  }
+  
+  .priority-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    border: 3px solid;
+    text-align: center;
+  }
+  
+  .priority-card.strong { border-color: #27ae60; }
+  .priority-card.medium { border-color: #f39c12; }
+  .priority-card.weak { border-color: #e74c3c; }
+  
+  .priority-card h4 {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+  
+  .priority-card.strong h4 { color: #27ae60; }
+  .priority-card.medium h4 { color: #f39c12; }
+  .priority-card.weak h4 { color: #e74c3c; }
+  
+  .priority-stats {
+    font-size: 13px;
+    color: #2c3e50;
+    line-height: 1.8;
+    margin-bottom: 12px;
+    text-align: left;
+  }
+  
+  .priority-score {
+    font-size: 24px;
+    font-weight: bold;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    margin-top: 12px;
+  }
+  
+  .priority-card.strong .priority-score { color: #27ae60; }
+  .priority-card.medium .priority-score { color: #f39c12; }
+  .priority-card.weak .priority-score { color: #e74c3c; }
+  
+  /* Rules section */
+  .rules-section {
+    margin-top: 32px;
+    padding: 24px;
+    background: #e8f5e9;
+    border-radius: 12px;
+    border-left: 4px solid #27ae60;
+  }
+  
+  .rules-section h3 {
+    color: #27ae60;
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+  
+  .rule-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .rule-step {
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+    border-left: 4px solid #27ae60;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .step-number {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    background: #27ae60;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+  
+  .step-content {
+    flex: 1;
+  }
+  
+  .step-content h4 {
+    color: #27ae60;
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+  
+  .step-content p {
+    font-size: 14px;
+    color: #2c3e50;
+    line-height: 1.6;
+  }
+  
+  .step-content .detail {
+    font-size: 12px;
+    color: #7f8c8d;
+    font-style: italic;
+    margin-top: 6px;
+  }
+  
+  /* Legend */
+  .legend {
+    margin-top: 32px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 2px solid #95a5a6;
+  }
+  
+  .legend h3 {
+    font-size: 16px;
+    margin-bottom: 12px;
+    color: #2c3e50;
+  }
+  
+  .legend-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .legend-color {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    border: 2px solid #95a5a6;
+  }
+  
+  @media print {
+    body {
+      background: white;
+      padding: 0;
+    }
+    .container {
+      box-shadow: none;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>The Water Game: Moisture Competition</h1>
+    <p class="subtitle">Who wins when plants compete for the same water tile?</p>
+    
+    <!-- Spatial visualization -->
+    <div class="spatial-view">
+      <div class="spatial-title">🗺️ Top-Down View: Three Plants Competing</div>
+      
+      <div class="soil-grid">
+        <!-- Soil tiles (simplified 8x6 grid for visualization) -->
+        <div class="soil-tile"></div>
+        <div class="soil-tile"></div>
+        <div class="soil-tile wet"></div>
+        <div class="soil-tile optimal"></div>
+        <div class="soil-tile optimal"></div>
+        <div class="soil-tile wet"></div>
+        <div class="soil-tile"></div>
+        <div class="soil-tile"></div>
+        
+        <div class="soil-tile"></div>
+        <div class="soil-tile wet"></div>
+        <div class="soil-tile optimal"></div>
+        <div class="soil-tile optimal contested"></div>
+        <div class="soil-tile optimal contested"></div>
+        <div class="soil-tile optimal"></div>
+        <div class="soil-tile wet"></div>
+        <div class="soil-tile"></div>
+        
+        <div class="soil-tile wet"></div>
+        <div class="soil-tile optimal"></div>
+        <div class="soil-tile optimal contested"></div>
+        <div class="soil-tile optimal contested"></div>
+        <div class="soil-tile optimal contested"></div>
+        <div class="soil-tile optimal contested"></div>
+        <div class="soil-tile optimal"></div>
+        <div class="soil-tile wet"></div>
+        
+        <div class="soil-tile wet"></div>
+        <div class="soil-tile optimal"></div>
+        <div class="soil-tile optimal contested"></div>
+        <div class="soil-tile optimal contested"></div>
+        <div class="soil-tile optimal contested"></div>
+        <div class="soil-tile optimal contested"></div>
+        <div class="soil-tile optimal"></div>
+        <div class="soil-tile wet"></div>
+        
+        <div class="soil-tile"></div>
+        <div class="soil-tile wet"></div>
+        <div class="soil-tile optimal"></div>
+        <div class="soil-tile optimal contested"></div>
+        <div class="soil-tile optimal contested"></div>
+        <div class="soil-tile optimal"></div>
+        <div class="soil-tile wet"></div>
+        <div class="soil-tile"></div>
+        
+        <div class="soil-tile"></div>
+        <div class="soil-tile"></div>
+        <div class="soil-tile wet"></div>
+        <div class="soil-tile optimal"></div>
+        <div class="soil-tile optimal"></div>
+        <div class="soil-tile wet"></div>
+        <div class="soil-tile"></div>
+        <div class="soil-tile"></div>
+        
+        <!-- Plant overlay -->
+        <div class="plant-overlay">
+          <!-- Plant A (Strong) -->
+          <div class="plant plant-a" style="left: 35%; top: 50%;">
+            <div class="plant-root-zone"></div>
+            <div class="plant-stem"></div>
+            <div class="plant-base"></div>
+            <div class="plant-label">Plant A (Strong)</div>
+          </div>
+          
+          <!-- Plant B (Medium) -->
+          <div class="plant plant-b" style="left: 55%; top: 50%;">
+            <div class="plant-root-zone"></div>
+            <div class="plant-stem"></div>
+            <div class="plant-base"></div>
+            <div class="plant-label">Plant B (Medium)</div>
+          </div>
+          
+          <!-- Plant C (Weak) -->
+          <div class="plant plant-c" style="left: 72%; top: 50%;">
+            <div class="plant-root-zone"></div>
+            <div class="plant-stem"></div>
+            <div class="plant-base"></div>
+            <div class="plant-label">Plant C (Weak)</div>
+          </div>
+        </div>
+      </div>
+      
+      <p style="text-align: center; margin-top: 20px; font-size: 13px; color: #7f8c8d;">
+        <strong>Dashed circles</strong> = root radius | <strong>Orange tiles</strong> = contested water (multiple plants want it)
+      </p>
+    </div>
+    
+    <!-- Priority calculation -->
+    <div class="priority-section">
+      <h3>🏆 Priority Score Calculation</h3>
+      <p style="font-size: 14px; color: #2c3e50; margin-bottom: 16px;">
+        Formula: <strong>Priority = vigor × (width × 2 + length)</strong><br>
+        Higher score = wins contested water tiles
+      </p>
+      
+      <div class="priority-grid">
+        <!-- Plant A -->
+        <div class="priority-card strong">
+          <h4>🌱 Plant A</h4>
+          <div class="priority-stats">
+            <strong>Vigor:</strong> 1.2 (strong)<br>
+            <strong>Width:</strong> 0.18<br>
+            <strong>Length:</strong> 0.08<br>
+            <strong>Root Radius:</strong> 1.18 units
+          </div>
+          <div class="priority-score">Score: 0.53</div>
+          <p style="font-size: 12px; color: #27ae60; margin-top: 8px; font-weight: 600;">✓ Wins most contests</p>
+        </div>
+        
+        <!-- Plant B -->
+        <div class="priority-card medium">
+          <h4>🌱 Plant B</h4>
+          <div class="priority-stats">
+            <strong>Vigor:</strong> 1.0 (average)<br>
+            <strong>Width:</strong> 0.15<br>
+            <strong>Length:</strong> 0.05<br>
+            <strong>Root Radius:</strong> 1.15 units
+          </div>
+          <div class="priority-score">Score: 0.35</div>
+          <p style="font-size: 12px; color: #f39c12; margin-top: 8px; font-weight: 600;">~ Wins against C only</p>
+        </div>
+        
+        <!-- Plant C -->
+        <div class="priority-card weak">
+          <h4>🌱 Plant C</h4>
+          <div class="priority-stats">
+            <strong>Vigor:</strong> 0.8 (weak)<br>
+            <strong>Width:</strong> 0.14<br>
+            <strong>Length:</strong> 0.03<br>
+            <strong>Root Radius:</strong> 1.14 units
+          </div>
+          <div class="priority-score">Score: 0.25</div>
+          <p style="font-size: 12px; color: #e74c3c; margin-top: 8px; font-weight: 600;">✗ Loses most contests</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Competition rules -->
+    <div class="rules-section">
+      <h3>⚔️ How Competition Works Each Growth Cycle</h3>
+      
+      <div class="rule-steps">
+        <div class="rule-step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h4>Check Root Radius</h4>
+            <p>Plant scans all soil tiles within its root radius. Root radius grows as the plant's width increases.</p>
+            <p class="detail">rootRadius = 1.0 + (1.0 × width growth)</p>
+          </div>
+        </div>
+        
+        <div class="rule-step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h4>Filter by Moisture Range</h4>
+            <p>Only tiles with moisture between 0.3-0.7 are usable. Too dry or too wet = plant can't access it.</p>
+            <p class="detail">Optimal moisture is 0.5 (50%) - furthest from this = slower growth</p>
+          </div>
+        </div>
+        
+        <div class="rule-step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h4>Find Closest Usable Tile</h4>
+            <p>Of all valid tiles, plant wants the closest one (measured from plant base to tile boundary).</p>
+            <p class="detail">Distance = edge-to-edge, not center-to-center</p>
+          </div>
+        </div>
+        
+        <div class="rule-step">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h4>Check for Competitors</h4>
+            <p>Is another plant also trying to take water from this tile? Calculate all priority scores.</p>
+            <p class="detail">Priority = vigor × (width × 2 + length)</p>
+          </div>
+        </div>
+        
+        <div class="rule-step">
+          <div class="step-number">5</div>
+          <div class="step-content">
+            <h4>Winner Takes Water</h4>
+            <p>Highest priority plant extracts moisture (-0.01) from the tile. Losers must find a different tile or face drought.</p>
+            <p class="detail">If no valid tile available = drought timer starts</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Legend -->
+    <div class="legend">
+      <h3>Soil Tile Colors:</h3>
+      <div class="legend-grid">
+        <div class="legend-item">
+          <div class="legend-color" style="background: #c19a6b;"></div>
+          <span><strong>Dry:</strong> Moisture < 0.3 (unusable)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #6ba3c1;"></div>
+          <span><strong>Wet:</strong> Moisture 0.3-0.7 (usable)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #4a90b8;"></div>
+          <span><strong>Optimal:</strong> Moisture ~0.5 (best growth)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #f39c12;"></div>
+          <span><strong>Contested:</strong> Multiple plants want it</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

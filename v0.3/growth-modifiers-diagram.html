@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f5f5;
+    padding: 40px 20px;
+  }
+  
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  
+  h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 32px;
+  }
+  
+  .subtitle {
+    text-align: center;
+    color: #7f8c8d;
+    margin-bottom: 40px;
+    font-size: 16px;
+  }
+  
+  /* Formula overview */
+  .formula-box {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 32px;
+    border-radius: 12px;
+    text-align: center;
+    margin-bottom: 40px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  }
+  
+  .formula-box h2 {
+    font-size: 24px;
+    margin-bottom: 16px;
+    opacity: 0.9;
+  }
+  
+  .formula {
+    font-size: 28px;
+    font-weight: bold;
+    font-family: 'Courier New', monospace;
+    background: rgba(255,255,255,0.2);
+    padding: 16px 24px;
+    border-radius: 8px;
+    display: inline-block;
+  }
+  
+  .formula-note {
+    font-size: 14px;
+    margin-top: 12px;
+    opacity: 0.9;
+  }
+  
+  /* Multiplier stack */
+  .multiplier-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+  
+  .multiplier-card {
+    background: white;
+    border: 3px solid;
+    border-radius: 12px;
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 200px 1fr 150px;
+    gap: 24px;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  .multiplier-header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .multiplier-header h3 {
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .multiplier-range {
+    font-size: 14px;
+    color: #7f8c8d;
+    font-weight: 600;
+  }
+  
+  .multiplier-description {
+    font-size: 14px;
+    color: #2c3e50;
+    line-height: 1.6;
+  }
+  
+  .multiplier-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .multiplier-bar {
+    width: 100%;
+    height: 24px;
+    background: #e9ecef;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .multiplier-fill {
+    height: 100%;
+    border-radius: 12px;
+    transition: width 0.3s;
+  }
+  
+  .multiplier-value {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  /* Color coding for cards */
+  .card-base { border-color: #3498db; }
+  .card-base h3 { color: #3498db; }
+  .card-base .multiplier-fill { background: linear-gradient(90deg, #3498db, #5dade2); }
+  
+  .card-vigor { border-color: #9b59b6; }
+  .card-vigor h3 { color: #9b59b6; }
+  .card-vigor .multiplier-fill { background: linear-gradient(90deg, #9b59b6, #bb8fce); }
+  
+  .card-moisture { border-color: #1abc9c; }
+  .card-moisture h3 { color: #1abc9c; }
+  .card-moisture .multiplier-fill { background: linear-gradient(90deg, #1abc9c, #48c9b0); }
+  
+  .card-etiolation-length { border-color: #e67e22; }
+  .card-etiolation-length h3 { color: #e67e22; }
+  .card-etiolation-length .multiplier-fill { background: linear-gradient(90deg, #e67e22, #f39c12); }
+  
+  .card-etiolation-width { border-color: #e74c3c; }
+  .card-etiolation-width h3 { color: #e74c3c; }
+  .card-etiolation-width .multiplier-fill { background: linear-gradient(90deg, #e74c3c, #ec7063); }
+  
+  /* Example scenarios */
+  .scenarios-section {
+    margin-top: 40px;
+    padding: 24px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 2px solid #95a5a6;
+  }
+  
+  .scenarios-section h3 {
+    font-size: 22px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+  }
+  
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+  }
+  
+  .scenario-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    border-left: 4px solid;
+  }
+  
+  .scenario-card.thriving { border-color: #27ae60; }
+  .scenario-card.struggling { border-color: #f39c12; }
+  .scenario-card.dying { border-color: #e74c3c; }
+  
+  .scenario-card h4 {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+  
+  .scenario-card.thriving h4 { color: #27ae60; }
+  .scenario-card.struggling h4 { color: #f39c12; }
+  .scenario-card.dying h4 { color: #e74c3c; }
+  
+  .scenario-stats {
+    font-size: 13px;
+    color: #2c3e50;
+    line-height: 1.8;
+    margin-bottom: 12px;
+  }
+  
+  .scenario-calculation {
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: 'Courier New', monospace;
+    margin: 12px 0;
+  }
+  
+  .scenario-result {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    padding: 12px;
+    border-radius: 6px;
+    margin-top: 12px;
+  }
+  
+  .scenario-card.thriving .scenario-result { 
+    background: #d5f4e6; 
+    color: #27ae60; 
+  }
+  
+  .scenario-card.struggling .scenario-result { 
+    background: #ffeaa7; 
+    color: #f39c12; 
+  }
+  
+  .scenario-card.dying .scenario-result { 
+    background: #ffcccc; 
+    color: #e74c3c; 
+  }
+  
+  /* Key insights */
+  .insights-section {
+    margin-top: 32px;
+    padding: 24px;
+    background: #e8f5e9;
+    border-radius: 12px;
+    border-left: 4px solid #27ae60;
+  }
+  
+  .insights-section h3 {
+    color: #27ae60;
+    font-size: 22px;
+    margin-bottom: 16px;
+  }
+  
+  .insight-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .insight-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #2c3e50;
+  }
+  
+  .insight-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    background: #27ae60;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 16px;
+  }
+  
+  @media print {
+    body {
+      background: white;
+      padding: 0;
+    }
+    .container {
+      box-shadow: none;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>Growing Up: Growth Modifiers Stack</h1>
+    <p class="subtitle">What makes plants grow fast or slow?</p>
+    
+    <!-- Formula overview -->
+    <div class="formula-box">
+      <h2>🧮 The Core Growth Formula</h2>
+      <div class="formula">
+        Growth = Base × Vigor × Moisture × Etiolation
+      </div>
+      <p class="formula-note">
+        This formula applies separately to both length and width each growth cycle (every 1 second)
+      </p>
+    </div>
+    
+    <!-- Multiplier stack -->
+    <div class="multiplier-stack">
+      <!-- Base Growth -->
+      <div class="multiplier-card card-base">
+        <div class="multiplier-header">
+          <h3>📏 Base Growth</h3>
+          <span class="multiplier-range">Fixed constants</span>
+        </div>
+        <div class="multiplier-description">
+          Starting point set in inspector. Length grows faster than width by default.
+          <br><br>
+          <strong>Length:</strong> 0.002 per cycle<br>
+          <strong>Width:</strong> 0.0001 per cycle
+        </div>
+        <div class="multiplier-visual">
+          <div class="multiplier-bar">
+            <div class="multiplier-fill" style="width: 100%;"></div>
+          </div>
+          <span class="multiplier-value" style="color: #3498db;">1.0x</span>
+        </div>
+      </div>
+      
+      <!-- Seed Vigor -->
+      <div class="multiplier-card card-vigor">
+        <div class="multiplier-header">
+          <h3>💪 Seed Vigor</h3>
+          <span class="multiplier-range">0.7x - 1.3x</span>
+        </div>
+        <div class="multiplier-description">
+          Random strength assigned at birth. This is the plant's inherent advantage or disadvantage.
+          <br><br>
+          <strong>Strong plant:</strong> 1.3x (30% faster)<br>
+          <strong>Weak plant:</strong> 0.7x (30% slower)<br>
+          <strong>Average:</strong> 1.0x
+        </div>
+        <div class="multiplier-visual">
+          <div class="multiplier-bar">
+            <div class="multiplier-fill" style="width: 85%;"></div>
+          </div>
+          <span class="multiplier-value" style="color: #9b59b6;">1.1x</span>
+        </div>
+      </div>
+      
+      <!-- Moisture Quality -->
+      <div class="multiplier-card card-moisture">
+        <div class="multiplier-header">
+          <h3>💧 Moisture Quality</h3>
+          <span class="multiplier-range">0.5x - 1.0x</span>
+        </div>
+        <div class="multiplier-description">
+          How close is the best available water to optimal (0.5)?
+          <br><br>
+          <strong>At optimal (0.5):</strong> 1.0x (perfect)<br>
+          <strong>At edges (0.3 or 0.7):</strong> 0.5x (stress)<br>
+          <strong>Outside range:</strong> 0x (drought)
+        </div>
+        <div class="multiplier-visual">
+          <div class="multiplier-bar">
+            <div class="multiplier-fill" style="width: 75%;"></div>
+          </div>
+          <span class="multiplier-value" style="color: #1abc9c;">0.75x</span>
+        </div>
+      </div>
+      
+      <!-- Etiolation (Length) -->
+      <div class="multiplier-card card-etiolation-length">
+        <div class="multiplier-header">
+          <h3>☀️ Light Competition (Length)</h3>
+          <span class="multiplier-range">1.0x - 2.0x</span>
+        </div>
+        <div class="multiplier-description">
+          Crowded plants stretch upward for light (etiolation).
+          <br><br>
+          <strong>0 neighbors:</strong> 1.0x (normal height)<br>
+          <strong>5+ neighbors:</strong> 2.0x (double height)<br>
+          <strong>Intensity:</strong> neighborCount / 5
+        </div>
+        <div class="multiplier-visual">
+          <div class="multiplier-bar">
+            <div class="multiplier-fill" style="width: 80%;"></div>
+          </div>
+          <span class="multiplier-value" style="color: #e67e22;">1.6x</span>
+        </div>
+      </div>
+      
+      <!-- Etiolation (Width) -->
+      <div class="multiplier-card card-etiolation-width">
+        <div class="multiplier-header">
+          <h3>☀️ Light Competition (Width)</h3>
+          <span class="multiplier-range">0.5x - 1.0x</span>
+        </div>
+        <div class="multiplier-description">
+          Crowded plants grow thinner (inverse of length modifier).
+          <br><br>
+          <strong>0 neighbors:</strong> 1.0x (normal width)<br>
+          <strong>5+ neighbors:</strong> 0.5x (half width)<br>
+          <strong>Intensity:</strong> neighborCount / 5
+        </div>
+        <div class="multiplier-visual">
+          <div class="multiplier-bar">
+            <div class="multiplier-fill" style="width: 40%;"></div>
+          </div>
+          <span class="multiplier-value" style="color: #e74c3c;">0.7x</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Example scenarios -->
+    <div class="scenarios-section">
+      <h3>📊 Example Scenarios: Same Base Growth, Different Outcomes</h3>
+      
+      <div class="scenario-grid">
+        <!-- Thriving plant -->
+        <div class="scenario-card thriving">
+          <h4>🌟 Thriving Plant</h4>
+          <div class="scenario-stats">
+            <strong>Vigor:</strong> 1.2 (strong)<br>
+            <strong>Moisture:</strong> 0.95x (near optimal)<br>
+            <strong>Neighbors:</strong> 0 (isolated)<br>
+            <strong>Etiolation:</strong> 1.0x length, 1.0x width
+          </div>
+          <div class="scenario-calculation">
+            Length = 0.002 × 1.2 × 0.95 × 1.0<br>
+            = 0.00228 per cycle<br>
+            <br>
+            Width = 0.0001 × 1.2 × 0.95 × 1.0<br>
+            = 0.000114 per cycle
+          </div>
+          <div class="scenario-result">
+            ✓ Growing 14% faster than average
+          </div>
+        </div>
+        
+        <!-- Struggling plant -->
+        <div class="scenario-card struggling">
+          <h4>⚠️ Struggling Plant</h4>
+          <div class="scenario-stats">
+            <strong>Vigor:</strong> 0.9 (slightly weak)<br>
+            <strong>Moisture:</strong> 0.65x (suboptimal)<br>
+            <strong>Neighbors:</strong> 3 (crowded)<br>
+            <strong>Etiolation:</strong> 1.6x length, 0.7x width
+          </div>
+          <div class="scenario-calculation">
+            Length = 0.002 × 0.9 × 0.65 × 1.6<br>
+            = 0.001872 per cycle<br>
+            <br>
+            Width = 0.0001 × 0.9 × 0.65 × 0.7<br>
+            = 0.000041 per cycle
+          </div>
+          <div class="scenario-result">
+            ~ Growing tall/thin (stressed)
+          </div>
+        </div>
+        
+        <!-- Dying plant -->
+        <div class="scenario-card dying">
+          <h4>☠️ Dying Plant</h4>
+          <div class="scenario-stats">
+            <strong>Vigor:</strong> 0.7 (weak)<br>
+            <strong>Moisture:</strong> 0.5x (edge of range)<br>
+            <strong>Neighbors:</strong> 4 (very crowded)<br>
+            <strong>Etiolation:</strong> 1.8x length, 0.55x width
+          </div>
+          <div class="scenario-calculation">
+            Length = 0.002 × 0.7 × 0.5 × 1.8<br>
+            = 0.00126 per cycle<br>
+            <br>
+            Width = 0.0001 × 0.7 × 0.5 × 0.55<br>
+            = 0.000019 per cycle
+          </div>
+          <div class="scenario-result">
+            ✗ 81% slower width growth<br>(near death threshold)
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Key insights -->
+    <div class="insights-section">
+      <h3>💡 Key Design Insights</h3>
+      
+      <div class="insight-list">
+        <div class="insight-item">
+          <div class="insight-icon">1</div>
+          <div>
+            <strong>Multiplicative, not additive:</strong> A weak plant (0.7 vigor) in bad conditions (0.5 moisture) grows at 0.35x speed, not 0.2x slower. Bad conditions compound dramatically.
+          </div>
+        </div>
+        
+        <div class="insight-item">
+          <div class="insight-icon">2</div>
+          <div>
+            <strong>Width matters more than length:</strong> Width growth is 20x slower than length (0.0001 vs 0.002), so any width penalty from etiolation creates huge competitive disadvantages over time.
+          </div>
+        </div>
+        
+        <div class="insight-item">
+          <div class="insight-icon">3</div>
+          <div>
+            <strong>Vigor is permanent advantage:</strong> Unlike moisture/etiolation (which change), vigor is set at birth. A 1.3 vigor plant will always outcompete a 0.7 plant in identical conditions.
+          </div>
+        </div>
+        
+        <div class="insight-item">
+          <div class="insight-icon">4</div>
+          <div>
+            <strong>Etiolation creates trade-offs:</strong> Crowded plants grow tall faster (good for light) but thin slower (bad for root spread). This creates distinct growth strategies.
+          </div>
+        </div>
+        
+        <div class="insight-item">
+          <div class="insight-icon">5</div>
+          <div>
+            <strong>Growth compounds over time:</strong> A plant growing 14% faster will be dramatically larger after 100 cycles, increasing its root radius and competition priority in a positive feedback loop.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

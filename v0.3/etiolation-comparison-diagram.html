@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f5f5;
+    padding: 40px 20px;
+  }
+  
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  
+  h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 32px;
+  }
+  
+  .subtitle {
+    text-align: center;
+    color: #7f8c8d;
+    margin-bottom: 40px;
+    font-size: 16px;
+  }
+  
+  /* Comparison grid */
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+    margin-bottom: 40px;
+  }
+  
+  .comparison-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 32px;
+    border: 3px solid;
+    position: relative;
+  }
+  
+  .comparison-card.lonely { border-color: #3498db; }
+  .comparison-card.crowded { border-color: #e67e22; }
+  
+  .comparison-header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  
+  .comparison-header h2 {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+  
+  .comparison-card.lonely h2 { color: #3498db; }
+  .comparison-card.crowded h2 { color: #e67e22; }
+  
+  .comparison-header p {
+    font-size: 14px;
+    color: #7f8c8d;
+  }
+  
+  /* Plant visualization */
+  .plant-visual-area {
+    background: linear-gradient(to bottom, #87ceeb 0%, #e8f5e9 50%, #d4a574 100%);
+    border-radius: 8px;
+    height: 400px;
+    position: relative;
+    margin-bottom: 24px;
+    overflow: hidden;
+    border: 2px solid #95a5a6;
+  }
+  
+  /* Ground line */
+  .ground-line {
+    position: absolute;
+    bottom: 80px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: #8b4513;
+    z-index: 5;
+  }
+  
+  /* Individual plant in visualization */
+  .vis-plant {
+    position: absolute;
+    bottom: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .vis-plant-stem {
+    background: linear-gradient(to top, #27ae60, #52be80);
+    border-radius: 4px;
+    position: relative;
+  }
+  
+  .vis-plant-base {
+    width: 12px;
+    height: 12px;
+    background: #27ae60;
+    border-radius: 50%;
+    border: 2px solid white;
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+  }
+  
+  /* Lonely plant (short and wide) */
+  .lonely-plant-1 {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .lonely-plant-1 .vis-plant-stem {
+    width: 40px;
+    height: 120px;
+  }
+  
+  /* Crowded plants (tall and thin) */
+  .crowded-plant-1 {
+    left: 20%;
+  }
+  
+  .crowded-plant-1 .vis-plant-stem {
+    width: 12px;
+    height: 240px;
+  }
+  
+  .crowded-plant-2 {
+    left: 40%;
+  }
+  
+  .crowded-plant-2 .vis-plant-stem {
+    width: 14px;
+    height: 220px;
+  }
+  
+  .crowded-plant-3 {
+    left: 60%;
+  }
+  
+  .crowded-plant-3 .vis-plant-stem {
+    width: 10px;
+    height: 250px;
+  }
+  
+  .crowded-plant-4 {
+    left: 80%;
+  }
+  
+  .crowded-plant-4 .vis-plant-stem {
+    width: 13px;
+    height: 230px;
+  }
+  
+  /* Stats box */
+  .stats-box {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+  }
+  
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #e9ecef;
+  }
+  
+  .stat-row:last-child {
+    border-bottom: none;
+  }
+  
+  .stat-label {
+    font-size: 14px;
+    color: #2c3e50;
+    font-weight: 600;
+  }
+  
+  .stat-value {
+    font-size: 14px;
+    font-weight: bold;
+  }
+  
+  .comparison-card.lonely .stat-value { color: #3498db; }
+  .comparison-card.crowded .stat-value { color: #e67e22; }
+  
+  /* Neighbor detection section */
+  .neighbor-section {
+    margin-top: 40px;
+    padding: 24px;
+    background: #fff3cd;
+    border-radius: 12px;
+    border-left: 4px solid #f39c12;
+  }
+  
+  .neighbor-section h3 {
+    color: #f39c12;
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+  
+  .neighbor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  
+  .neighbor-example {
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+    border-left: 3px solid #f39c12;
+  }
+  
+  .neighbor-example h4 {
+    color: #f39c12;
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+  
+  .neighbor-example p {
+    font-size: 14px;
+    color: #2c3e50;
+    line-height: 1.6;
+  }
+  
+  .neighbor-calc {
+    background: #f8f9fa;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: 'Courier New', monospace;
+    margin-top: 8px;
+  }
+  
+  /* Formula section */
+  .formula-section {
+    margin-top: 32px;
+    padding: 24px;
+    background: #e8f5e9;
+    border-radius: 12px;
+    border-left: 4px solid #27ae60;
+  }
+  
+  .formula-section h3 {
+    color: #27ae60;
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+  
+  .formula-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .formula-step {
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .step-num {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    background: #27ae60;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+  }
+  
+  .step-text {
+    flex: 1;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #2c3e50;
+  }
+  
+  .step-text strong {
+    color: #27ae60;
+  }
+  
+  /* Outcomes section */
+  .outcomes-section {
+    margin-top: 32px;
+    padding: 24px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 2px solid #95a5a6;
+  }
+  
+  .outcomes-section h3 {
+    font-size: 22px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+  }
+  
+  .outcomes-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .outcome-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid;
+  }
+  
+  .outcome-card.pro { border-color: #27ae60; }
+  .outcome-card.con { border-color: #e74c3c; }
+  
+  .outcome-card h4 {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+  
+  .outcome-card.pro h4 { color: #27ae60; }
+  .outcome-card.con h4 { color: #e74c3c; }
+  
+  .outcome-card p {
+    font-size: 14px;
+    color: #2c3e50;
+    line-height: 1.6;
+  }
+  
+  @media print {
+    body {
+      background: white;
+      padding: 0;
+    }
+    .container {
+      box-shadow: none;
+    }
+  }
+  
+  @media (max-width: 900px) {
+    .comparison-grid {
+      grid-template-columns: 1fr;
+    }
+    .outcomes-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>Crowded vs Lonely: Etiolation Mechanics</h1>
+    <p class="subtitle">How neighboring plants change growth shape</p>
+    
+    <!-- Side-by-side comparison -->
+    <div class="comparison-grid">
+      <!-- Lonely plant -->
+      <div class="comparison-card lonely">
+        <div class="comparison-header">
+          <h2>🌴 Lonely Plant</h2>
+          <p>0 neighbors within root radius</p>
+        </div>
+        
+        <div class="plant-visual-area">
+          <div class="ground-line"></div>
+          <div class="vis-plant lonely-plant-1">
+            <div class="vis-plant-stem">
+              <div class="vis-plant-base"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="stats-box">
+          <div class="stat-row">
+            <span class="stat-label">Neighbor Count:</span>
+            <span class="stat-value">0</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Intensity:</span>
+            <span class="stat-value">0.0 (0/5)</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Length Modifier:</span>
+            <span class="stat-value">1.0x (normal)</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Width Modifier:</span>
+            <span class="stat-value">1.0x (normal)</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Growth Strategy:</span>
+            <span class="stat-value">Short & Wide</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Root Spread:</span>
+            <span class="stat-value">Maximum</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Crowded plants -->
+      <div class="comparison-card crowded">
+        <div class="comparison-header">
+          <h2>🌲 Crowded Forest</h2>
+          <p>5+ neighbors per plant</p>
+        </div>
+        
+        <div class="plant-visual-area">
+          <div class="ground-line"></div>
+          <div class="vis-plant crowded-plant-1">
+            <div class="vis-plant-stem">
+              <div class="vis-plant-base"></div>
+            </div>
+          </div>
+          <div class="vis-plant crowded-plant-2">
+            <div class="vis-plant-stem">
+              <div class="vis-plant-base"></div>
+            </div>
+          </div>
+          <div class="vis-plant crowded-plant-3">
+            <div class="vis-plant-stem">
+              <div class="vis-plant-base"></div>
+            </div>
+          </div>
+          <div class="vis-plant crowded-plant-4">
+            <div class="vis-plant-stem">
+              <div class="vis-plant-base"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="stats-box">
+          <div class="stat-row">
+            <span class="stat-label">Neighbor Count:</span>
+            <span class="stat-value">5+</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Intensity:</span>
+            <span class="stat-value">1.0 (5/5)</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Length Modifier:</span>
+            <span class="stat-value">2.0x (double)</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Width Modifier:</span>
+            <span class="stat-value">0.5x (half)</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Growth Strategy:</span>
+            <span class="stat-value">Tall & Thin</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Root Spread:</span>
+            <span class="stat-value">Limited</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Neighbor detection mechanics -->
+    <div class="neighbor-section">
+      <h3>👥 How Neighbors Are Detected</h3>
+      
+      <div class="neighbor-grid">
+        <div class="neighbor-example">
+          <h4>Step 1: Check Root Radius</h4>
+          <p>Plant scans all other healthy plants within its current root radius.</p>
+          <div class="neighbor-calc">
+            rootRadius = 1.0 + (1.0 × widthGrowth)
+          </div>
+        </div>
+        
+        <div class="neighbor-example">
+          <h4>Step 2: Count Neighbors</h4>
+          <p>Any healthy plant with overlapping root zones counts as a neighbor.</p>
+          <div class="neighbor-calc">
+            if distance <= rootRadius: neighbor++
+          </div>
+        </div>
+        
+        <div class="neighbor-example">
+          <h4>Step 3: Calculate Intensity</h4>
+          <p>Intensity increases linearly from 0 to 5 neighbors, then caps at 1.0.</p>
+          <div class="neighbor-calc">
+            intensity = clamp(neighborCount / 5, 0, 1)
+          </div>
+        </div>
+        
+        <div class="neighbor-example">
+          <h4>Step 4: Apply Modifiers</h4>
+          <p>Lerp between normal (1.0) and extreme (2.0 or 0.5) based on intensity.</p>
+          <div class="neighbor-calc">
+            lengthMod = lerp(1.0, 2.0, intensity)<br>
+            widthMod = lerp(1.0, 0.5, intensity)
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Formula explanation -->
+    <div class="formula-section">
+      <h3>🧮 The Etiolation Formula</h3>
+      
+      <div class="formula-steps">
+        <div class="formula-step">
+          <div class="step-num">1</div>
+          <div class="step-text">
+            <strong>Intensity = neighborCount / 5</strong> (clamped 0-1)<br>
+            This determines how "crowded" the plant feels. 0 neighbors = 0 intensity, 5+ neighbors = max intensity.
+          </div>
+        </div>
+        
+        <div class="formula-step">
+          <div class="step-num">2</div>
+          <div class="step-text">
+            <strong>lengthModifier = lerp(1.0, etiolationStrength, intensity)</strong><br>
+            Default etiolationStrength = 2.0, so crowded plants grow 2x taller.
+          </div>
+        </div>
+        
+        <div class="formula-step">
+          <div class="step-num">3</div>
+          <div class="step-text">
+            <strong>widthModifier = lerp(1.0, 1/etiolationStrength, intensity)</strong><br>
+            Inverse of length modifier. With strength 2.0, crowded plants grow 0.5x wider.
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Strategic outcomes -->
+    <div class="outcomes-section">
+      <h3>⚖️ Strategic Trade-offs</h3>
+      
+      <div class="outcomes-grid">
+        <div class="outcome-card pro">
+          <h4>✓ Benefits of Being Lonely</h4>
+          <p>
+            • <strong>Wide growth</strong> = larger root radius<br>
+            • <strong>Larger root radius</strong> = access to more water tiles<br>
+            • <strong>More water access</strong> = consistent growth<br>
+            • <strong>Consistent growth</strong> = high competition priority
+          </p>
+        </div>
+        
+        <div class="outcome-card con">
+          <h4>✗ Costs of Being Lonely</h4>
+          <p>
+            • <strong>Short height</strong> = less visible biomass<br>
+            • <strong>No etiolation boost</strong> = slower vertical growth<br>
+            • <strong>Vulnerable to encroachment</strong> = neighbors can crowd in later
+          </p>
+        </div>
+        
+        <div class="outcome-card pro">
+          <h4>✓ Benefits of Being Crowded</h4>
+          <p>
+            • <strong>Tall growth</strong> = reaching above neighbors for light<br>
+            • <strong>2x length modifier</strong> = rapid vertical growth<br>
+            • <strong>Dense clusters</strong> = exclude new competitors
+          </p>
+        </div>
+        
+        <div class="outcome-card con">
+          <h4>✗ Costs of Being Crowded</h4>
+          <p>
+            • <strong>Thin growth</strong> = limited root expansion<br>
+            • <strong>Limited roots</strong> = fewer water tiles accessible<br>
+            • <strong>Fewer water tiles</strong> = lose competition to wider plants<br>
+            • <strong>Losing competition</strong> = drought and death
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

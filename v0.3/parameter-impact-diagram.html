@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f5f5;
+    padding: 40px 20px;
+  }
+  
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  
+  h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 32px;
+  }
+  
+  .subtitle {
+    text-align: center;
+    color: #7f8c8d;
+    margin-bottom: 40px;
+    font-size: 16px;
+  }
+  
+  /* Category sections */
+  .param-category {
+    margin-bottom: 40px;
+    padding: 24px;
+    border-radius: 12px;
+    border-left: 4px solid;
+  }
+  
+  .category-generation { 
+    background: #e3f2fd; 
+    border-color: #2196f3; 
+  }
+  
+  .category-growth { 
+    background: #e8f5e9; 
+    border-color: #4caf50; 
+  }
+  
+  .category-moisture { 
+    background: #e1f5fe; 
+    border-color: #00bcd4; 
+  }
+  
+  .category-competition { 
+    background: #fff3e0; 
+    border-color: #ff9800; 
+  }
+  
+  .category-death { 
+    background: #ffebee; 
+    border-color: #f44336; 
+  }
+  
+  .category-rain { 
+    background: #f3e5f5; 
+    border-color: #9c27b0; 
+  }
+  
+  .param-category h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .category-generation h2 { color: #2196f3; }
+  .category-growth h2 { color: #4caf50; }
+  .category-moisture h2 { color: #00bcd4; }
+  .category-competition h2 { color: #ff9800; }
+  .category-death h2 { color: #f44336; }
+  .category-rain h2 { color: #9c27b0; }
+  
+  /* Parameter cards */
+  .param-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+  }
+  
+  .param-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    transition: all 0.2s;
+  }
+  
+  .param-card:hover {
+    border-color: #95a5a6;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  
+  .param-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+  
+  .param-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c3e50;
+    flex: 1;
+  }
+  
+  .param-default {
+    font-size: 12px;
+    color: white;
+    background: #95a5a6;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    margin-left: 8px;
+  }
+  
+  .param-description {
+    font-size: 14px;
+    color: #2c3e50;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+  
+  .param-impact {
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 6px;
+    border-left: 3px solid #3498db;
+  }
+  
+  .param-impact-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #3498db;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  
+  .param-impact-list {
+    font-size: 13px;
+    color: #2c3e50;
+    line-height: 1.8;
+  }
+  
+  .param-impact-list li {
+    margin-left: 16px;
+  }
+  
+  /* Warning box */
+  .warning-box {
+    background: #fff3cd;
+    border: 2px solid #f39c12;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .warning-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  
+  .warning-text {
+    font-size: 13px;
+    color: #2c3e50;
+    line-height: 1.5;
+  }
+  
+  .warning-text strong {
+    color: #e67e22;
+  }
+  
+  /* Quick reference table */
+  .quick-ref {
+    margin-top: 40px;
+    padding: 24px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 2px solid #95a5a6;
+  }
+  
+  .quick-ref h3 {
+    font-size: 22px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+  }
+  
+  .ref-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+  }
+  
+  .ref-item {
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+    border-left: 4px solid;
+  }
+  
+  .ref-item.speed { border-color: #3498db; }
+  .ref-item.difficulty { border-color: #e74c3c; }
+  .ref-item.variety { border-color: #9b59b6; }
+  
+  .ref-item h4 {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+  
+  .ref-item.speed h4 { color: #3498db; }
+  .ref-item.difficulty h4 { color: #e74c3c; }
+  .ref-item.variety h4 { color: #9b59b6; }
+  
+  .ref-item p {
+    font-size: 13px;
+    color: #2c3e50;
+    line-height: 1.6;
+  }
+  
+  @media print {
+    body {
+      background: white;
+      padding: 0;
+    }
+    .container {
+      box-shadow: none;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>Control Panel: Parameter Impact Map</h1>
+    <p class="subtitle">What each inspector slider actually does</p>
+    
+    <!-- GENERATION PARAMETERS -->
+    <div class="param-category category-generation">
+      <h2>🌱 Generation Parameters</h2>
+      <div class="param-grid">
+        <div class="param-card">
+          <div class="param-header">
+            <span class="param-name">plantCount</span>
+            <span class="param-default">90</span>
+          </div>
+          <p class="param-description">
+            How many plants spawn at the start of the simulation.
+          </p>
+          <div class="param-impact">
+            <div class="param-impact-title">Impact:</div>
+            <ul class="param-impact-list">
+              <li>Higher = more competition</li>
+              <li>Higher = more crowding (etiolation)</li>
+              <li>Higher = faster moisture depletion</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="param-card">
+          <div class="param-header">
+            <span class="param-name">seed</span>
+            <span class="param-default">0</span>
+          </div>
+          <p class="param-description">
+            Random seed for plant placement and vigor values.
+          </p>
+          <div class="param-impact">
+            <div class="param-impact-title">Impact:</div>
+            <ul class="param-impact-list">
+              <li>Different seeds = different starting layouts</li>
+              <li>Same seed = reproducible results</li>
+              <li>Use "New Seed" button for variety</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="param-card">
+          <div class="param-header">
+            <span class="param-name">defaultPlantLength</span>
+            <span class="param-default">0.02</span>
+          </div>
+          <p class="param-description">
+            Starting height of all plants at birth.
+          </p>
+          <div class="param-impact">
+            <div class="param-impact-title">Impact:</div>
+            <ul class="param-impact-list">
+              <li>Visual only - doesn't affect gameplay</li>
+              <li>Higher = plants start taller</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="param-card">
+          <div class="param-header">
+            <span class="param-name">defaultPlantWidth</span>
+            <span class="param-default">0.14</span>
+          </div>
+          <p class="param-description">
+            Starting thickness/root spread of all plants.
+          </p>
+          <div class="param-impact">
+            <div class="param-impact-title">Impact:</div>
+            <ul class="param-impact-list">
+              <li>Higher = larger starting root radius</li>
+              <li>Higher = easier early water access</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="param-card">
+          <div class="param-header">
+            <span class="param-name">defaultRootSpreadDistance</span>
+            <span class="param-default">1.0</span>
+          </div>
+          <p class="param-description">
+            Base root radius before width growth bonuses.
+          </p>
+          <div class="param-impact">
+            <div class="param-impact-title">Impact:</div>
+            <ul class="param-impact-list">
+              <li>Higher = plants can reach further water</li>
+              <li>Higher = more neighbor detection</li>
+              <li><strong>Critical survival parameter</strong></li>
+            </ul>
+          </div>
+          <div class="warning-box">
+            <span class="warning-icon">⚠️</span>
+            <div class="warning-text">
+              <strong>Too low:</strong> Plants can't reach water tiles, instant death.<br>
+              <strong>Too high:</strong> All plants overlap, extreme crowding.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- GROWTH PARAMETERS -->
+    <div class="param-category category-growth">
+      <h2>📈 Growth Parameters</h2>
+      <div class="param-grid">
+        <div class="param-card">
+          <div class="param-header">
+            <span class="param-name">checkInterval</span>
+            <span class="param-default">1.0s</span>
+          </div>
+          <p class="param-description">
+            How often (in seconds) plants check conditions and grow.
+          </p>
+          <div class="param-impact">
+            <div class="param-impact-title">Impact:</div>
+            <ul class="param-impact-list">
+              <li>Lower = faster growth cycles</li>
+              <li>Lower = more CPU usage</li>
+              <li>Affected by Time Scale multiplier</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="param-card">
+          <div class="param-header">
+            <span class="param-name">growthIncrementLength</span>
+            <span class="param-default">0.002</span>
+          </div>
+          <p class="param-description">
+            Base amount plants grow taller per cycle (before modifiers).
+          </p>
+          <div class="param-impact">
+            <div class="param-impact-title">Impact:</div>
+            <ul class="param-impact-list">
+              <li>Higher = taller plants faster</li>
+              <li>Multiplied by vigor, moisture, etiolation</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="param-card">
+          <div class="param-header">
+            <span class="param-name">growthIncrementWidth</span>
+            <span class="param-default">0.0001</span>
+          </div>
+          <p class="param-description">
+            Base amount plants grow wider per cycle (before modifiers).
+          </p>
+          <div class="param-impact">
+            <div class="param-impact-title">Impact:</div>
+            <ul class="param-impact-list">
+              <li>Higher = thicker plants faster</li>
+              <li>Higher = root radius grows faster</li>
+              <li><strong>Affects competition priority</strong></li>
+            </ul>
+          </div>
+          <div class="warning-box">
+            <span class="warning-icon">⚠️</span>
+            <div class="warning-text">
+              <strong>Critical parameter:</strong> Width growth is 20x slower than length by default. Even small changes dramatically affect competition balance.
+            </div>
+          </div>
+        </div>
+        
+        <div class="param-card">
+          <div class="param-header">
+            <span class="param-name">rootDistanceMultiplier</span>
+            <span class="param-default">1.0</span>
+          </div>
+          <p class="param-description">
+            How much width growth expands root radius.
+          </p>
+          <div class="param-impact">
+            <div class="param-impact-title">Impact:</div>
+            <ul class="param-impact-list">
+              <li>Formula: rootRadius = 1.0 + (this × widthGrowth)</li>
+              <li>Higher = wider plants dominate more</li>
+              <li>Lower = width matters less</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- MOISTURE PARAMETERS -->
+    <div class="param-category category-moisture">
+      <h2>💧 Moisture Parameters</h2>
+      <div class="param-grid">
+        <div class="param-card">
+          <div class="param-header">
+            <span class="param-name">minMoisture</span>
+            <span class="param-default">0.3</span>
+          </div>
+          <p class="param-description">
+            Minimum moisture level plants can use (0-1 range).
+          </p>
+          <div class="param-impact">
+            <div class="param-impact-title">Impact:</div>
+            <ul class="param-impact-list">
+              <li>Higher = fewer usable tiles (harder survival)</li>
+              <li>Lower = more tiles available (easier)</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="param-card">
+          <div class="param-header">
+            <span class="param-name">maxMoisture</span>
+            <span class="param-default">0.7</span>
+          </div>
+          <p class="param-description">
+            Maximum moisture level plants can use (0-1 range).
+          </p>
+          <div class="param-impact">
+            <div class="param-impact-title">Impact:</div>
+            <ul class="param-impact-list">
+              <li>Lower = fewer usable tiles (harder survival)</li>
+              <li>Higher = more tiles available (easier)</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="param-card">
+          <div class="param-header">
+            <span class="param-name">optimalMoisture</span>
+            <span class="param-default">0.5</span>
+          </div>
+          <p class="param-description">
+            Sweet spot for fastest growth (between min and max).
+          </p>
+          <div class="param-impact">
+            <div class="param-impact-title">Impact:</div>
+            <ul class="param-impact-list">
+              <li>Distance from this = growth penalty</li>
+              <li>At edges (min/max) = 50% growth rate</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="param-card">
+          <div class="param-header">
+            <span class="param-name">marginalMoistureGrowthRate</span>
+            <span class="param-default">0.5</span>
+          </div>
+          <p class="param-description">
+            Growth rate multiplier at min/max moisture edges.
+          </p>
+          <div class="param-impact">
+            <div class="param-impact-title">Impact:</div>
+            <ul class="param-impact-list">
+              <li>1.0 = no penalty at edges</li>
+              <li>0.5 = 50% growth at edges (default)</li>
+              <li>0.0 = can only grow at exact optimal</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="param-card">
+          <div class="param-header">
+            <span class="param-name">moistureDecrement</span>
+            <span class="param-default">0.01</span>
+          </div>
+          <p class="param-description">
+            How much moisture plants extract per growth cycle.
+          </p>
+          <div class="param-impact">
+            <div class="param-impact-title">Impact:</div>
+            <ul class="param-impact-list">
+              <li>Higher = soil dries faster</li>
+              <li>Higher = more rain needed</li>
+              <li>Balance with rain's moistureIncrement</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- COMPETITION PARAMETERS -->
+    <div class="param-category category-competition">
+      <h2>⚔️ Competition Parameters</h2>
+      <div class="param-grid">
+        <div class="param-card">
+          <div class="param-header">
+            <span class="param-name">etiolationStrength</span>
+            <span class="param-default">2.0</span>
+          </div>
+          <p class="param-description">
+            How extreme the tall/thin vs short/wide growth becomes.
+          </p>
+          <div class="param-impact">
+            <div class="param-impact-title">Impact:</div>
+            <ul class="param-impact-list">
+              <li>2.0 = crowded plants 2x taller, 0.5x wider</li>
+              <li>1.0 = no etiolation effect</li>
+              <li>3.0 = extreme tall/thin (3x, 0.33x)</li>
+            </ul>
+          </div>
+          <div class="warning-box">
+            <span class="warning-icon">⚠️</span>
+            <div class="warning-text">
+              <strong>High values (>2.5):</strong> Crowded plants become too thin, lose all water competition, mass death events.
+            </div>
+          </div>
+        </div>
+        
+        <div class="param-card">
+          <div class="param-header">
+            <span class="param-name">competitionRadius</span>
+            <span class="param-default">2.0</span>
+          </div>
+          <p class="param-description">
+            (Currently unused in code - for future features)
+          </p>
+          <div class="param-impact">
+            <div class="param-impact-title">Impact:</div>
+            <ul class="param-impact-list">
+              <li>No effect in current version</li>
+              <li>Placeholder for future competition mechanics</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- DEATH PARAMETERS -->
+    <div class="param-category category-death">
+      <h2>☠️ Death Parameters</h2>
+      <div class="param-grid">
+        <div class="param-card">
+          <div class="param-header">
+            <span class="param-name">timeToDie</span>
+            <span class="param-default">10s</span>
+          </div>
+          <p class="param-description">
+            How long (seconds) a plant can survive without water before wilting.
+          </p>
+          <div class="param-impact">
+            <div class="param-impact-title">Impact:</div>
+            <ul class="param-impact-list">
+              <li>Higher = more forgiving (plants survive droughts)</li>
+              <li>Lower = harsher (quick death from competition loss)</li>
+              <li>Once wilting starts, death is inevitable</li>
+            </ul>
+          </div>
+          <div class="warning-box">
+            <span class="warning-icon">⚠️</span>
+            <div class="warning-text">
+              <strong>Too low (<5s):</strong> Mass die-offs from temporary water shortages. <strong>Too high (>20s):</strong> Weak plants linger too long, overpopulation.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- RAIN PARAMETERS -->
+    <div class="param-category category-rain">
+      <h2>☔ Rain Parameters (ManagerRain)</h2>
+      <div class="param-grid">
+        <div class="param-card">
+          <div class="param-header">
+            <span class="param-name">raindropCount</span>
+            <span class="param-default">200</span>
+          </div>
+          <p class="param-description">
+            How many raindrops fall simultaneously across the world.
+          </p>
+          <div class="param-impact">
+            <div class="param-impact-title">Impact:</div>
+            <ul class="param-impact-list">
+              <li>Higher = more frequent moisture replenishment</li>
+              <li>Balance with moistureDecrement</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="param-card">
+          <div class="param-header">
+            <span class="param-name">moistureIncrement (Soil)</span>
+            <span class="param-default">0.1</span>
+          </div>
+          <p class="param-description">
+            How much moisture each raindrop adds to a tile.
+          </p>
+          <div class="param-impact">
+            <div class="param-impact-title">Impact:</div>
+            <ul class="param-impact-list">
+              <li>Higher = faster soil recharge</li>
+              <li>Must balance with plant extraction rate</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="param-card">
+          <div class="param-header">
+            <span class="param-name">speed</span>
+            <span class="param-default">8.0</span>
+          </div>
+          <p class="param-description">
+            How fast raindrops fall (visual only).
+          </p>
+          <div class="param-impact">
+            <div class="param-impact-title">Impact:</div>
+            <ul class="param-impact-list">
+              <li>Purely visual - doesn't affect moisture rate</li>
+              <li>Affected by Time Scale</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- QUICK REFERENCE -->
+    <div class="quick-ref">
+      <h3>🎯 Quick Tuning Guide</h3>
+      <div class="ref-grid">
+        <div class="ref-item speed">
+          <h4>⏱️ Want Faster Action?</h4>
+          <p>
+            <strong>Increase:</strong> growthIncrementLength/Width, raindropCount<br>
+            <strong>Decrease:</strong> checkInterval, timeToDie<br>
+            <strong>Or use:</strong> Time Scale buttons (5x speed)
+          </p>
+        </div>
+        
+        <div class="ref-item difficulty">
+          <h4>🔥 Want Harder Survival?</h4>
+          <p>
+            <strong>Increase:</strong> plantCount, minMoisture, etiolationStrength<br>
+            <strong>Decrease:</strong> defaultRootSpreadDistance, maxMoisture, timeToDie<br>
+            <strong>Result:</strong> More competition, faster death
+          </p>
+        </div>
+        
+        <div class="ref-item difficulty">
+          <h4>🌿 Want Easier Survival?</h4>
+          <p>
+            <strong>Increase:</strong> defaultRootSpreadDistance, timeToDie, raindropCount<br>
+            <strong>Decrease:</strong> plantCount, minMoisture, moistureDecrement<br>
+            <strong>Result:</strong> More water access, longer grace periods
+          </p>
+        </div>
+        
+        <div class="ref-item variety">
+          <h4>🎨 Want More Visual Variety?</h4>
+          <p>
+            <strong>Increase:</strong> etiolationStrength, colorVariation<br>
+            <strong>Adjust:</strong> seed (use "New Seed" button)<br>
+            <strong>Result:</strong> More distinct plant shapes and colors
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
